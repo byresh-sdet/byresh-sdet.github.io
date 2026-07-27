@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Element locators that survive OS updates, explicit waits over sleeps, and a device-farm strategy that keeps mobile regression under ten minutes." />
+<title>Stable Appium Automation on Real Android Devices — Byresh · SDET</title>
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="apple-touch-icon" href="../assets/img/favicon.png" />
+<meta property="og:title" content="Stable Appium Automation on Real Android Devices — Byresh · SDET" />
+<meta property="og:description" content="Element locators that survive OS updates, explicit waits over sleeps, and a device-farm strategy that keeps mobile regression under ten minutes." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://byresh-sdet.github.io/assets/img/byresh-400.jpg" />
+<meta name="twitter:card" content="summary" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/style.css" />
+<script>
+  // set theme before first paint so there is no light/dark flash
+  try {
+    document.documentElement.setAttribute(
+      'data-theme', localStorage.getItem('gs-theme') || 'dark');
+  } catch (e) { }
+</script>
+</head>
+<body data-page="blog">
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html"><span class="p">~$</span> green-suite</a>
+    <div class="nav-right">
+      <nav class="nav-links" id="nav-links">
+      <a href="../index.html">home</a>
+      <a href="../about.html">about</a>
+      <a href="../skills.html">skills</a>
+      <a href="../projects.html">projects</a>
+      <a href="../blog.html">blog</a>
+      <a href="../contact.html">contact</a>
+      </nav>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to light mode">☀</button>
+      <button class="icon-btn nav-toggle" id="nav-toggle" type="button"
+              aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">≡</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <article class="article">
+    <header class="article-head reveal in">
+      <div class="meta" style="display:flex;gap:10px;align-items:center;font-size:11.5px;color:var(--muted);flex-wrap:wrap">
+        <span class="cat">Mobile</span><span>2026-06-12</span>
+        <span class="dim">·</span><span>7 min read</span>
+      </div>
+      <h1>Stable Appium Automation on Real Android Devices</h1>
+      <p style="color:var(--muted);font-size:14px;margin:0">Element locators that survive OS updates, explicit waits over sleeps, and a device-farm strategy that keeps mobile regression under ten minutes.</p>
+      <div class="tags" style="margin-top:12px"><span class="tag">appium</span><span class="tag">android</span><span class="tag">mobile</span></div>
+    </header>
+
+    <div class="article-body reveal in">
+<h2>Mobile flake has different causes</h2>
+<p>On the web, most flake is timing. On real devices you also get slow app starts, permission
+dialogs, OS-level popups, and animations that make an element visible before it's tappable.
+The good news is that all of them are addressable with the same discipline.</p>
+
+<h2>Locators that survive an OS update</h2>
+<p>XPath over a rendered hierarchy is the mobile equivalent of a CSS selector built from
+auto-generated class names — it works until the next release. Rank locators like this:</p>
+<ol>
+  <li><code>accessibility id</code> — set by developers, stable, and it improves the app's actual
+      accessibility. Ask for it in the same PR as the feature.</li>
+  <li><code>resource-id</code> — stable enough, Android-specific.</li>
+  <li><code>UiSelector</code> / predicate strings — fine when scoped tightly.</li>
+  <li>XPath — last resort, and never absolute.</li>
+</ol>
+<pre><code># good
+el = driver.find_element(AppiumBy.ACCESSIBILITY_ID, "checkout-submit")
+
+# fragile
+el = driver.find_element(
+    AppiumBy.XPATH, "//android.widget.LinearLayout[3]/android.widget.Button[1]")</code></pre>
+
+<h2>Wait for interactable, not for present</h2>
+<p>A view can be in the hierarchy, on screen, and still mid-animation. Tapping it registers on
+whatever ends up under your finger a moment later — which is how you get a test that fails once
+every thirty runs with a screenshot showing the correct screen.</p>
+<pre><code>wait = WebDriverWait(driver, 20, poll_frequency=0.4)
+btn = wait.until(EC.element_to_be_clickable(
+    (AppiumBy.ACCESSIBILITY_ID, "checkout-submit")))
+btn.click()</code></pre>
+<p>Set a global <code>implicitlyWait</code> of zero and use explicit waits everywhere. Mixing the two
+produces waits that multiply in ways nobody can reason about.</p>
+
+<h2>Capabilities that stop the environment fighting you</h2>
+<pre><code>caps = {
+    "platformName": "Android",
+    "appium:automationName": "UiAutomator2",
+    "appium:autoGrantPermissions": True,
+    "appium:disableWindowAnimation": True,
+    "appium:newCommandTimeout": 120,
+    "appium:uiautomator2ServerLaunchTimeout": 60000,
+    "appium:noReset": False,
+}</code></pre>
+<p><code>autoGrantPermissions</code> removes an entire class of "unexpected dialog" failures.
+<code>disableWindowAnimation</code> alone cut our mobile flake by roughly half — no animation means no
+window where an element is visible but not yet hittable.</p>
+
+<h2>Emulators and real devices both, deliberately</h2>
+<p>Emulators are cheap, parallel, and reproducible. Real devices catch the things emulators can't:
+camera, biometrics, poor network, low memory. The split that worked:</p>
+<ul>
+  <li><strong>Every PR</strong> — smoke suite on emulators, four in parallel, under four minutes.</li>
+  <li><strong>Nightly</strong> — full regression on a device farm across three OS versions and two form factors.</li>
+  <li><strong>Pre-release</strong> — manual exploratory on the oldest supported device, because it always finds something.</li>
+</ul>
+
+<h2>Where it landed</h2>
+<p>Mobile regression runs in nine minutes against six parallel emulators, and the nightly real-device
+pass is the only place we've seen genuine device-specific bugs — three in the last year, all of
+which would have shipped.</p>
+    </div>
+
+    <nav class="article-nav">
+      <span><a href="load-testing-k6-thresholds.html">← Load Testing with k6 — Thresholds That Actually Gate a Release</a></span>
+      <span><a href="../contact.html">get in touch →</a></span>
+    </nav>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap fl">
+    <span>© <span data-year></span> Byresh · SDET</span>
+    <span>built with plain HTML — green means ship it · <a href="mailto:byresh.sdet@example.com">byresh.sdet@example.com</a></span>
+  </div>
+</footer>
+
+<button class="to-top" id="to-top" type="button" aria-label="Back to top">↑</button>
+
+<script src="../assets/js/main.js"></script>
+
+</body>
+</html>

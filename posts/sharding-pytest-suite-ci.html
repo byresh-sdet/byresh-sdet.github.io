@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Splitting 2,400 tests across parallel GitHub Actions runners with pytest-xdist and load-balanced sharding — plus how to keep flaky-order failures from creeping back in." />
+<title>From 40 min to 6 min: Sharding a pytest Suite Across Runners — Byresh · SDET</title>
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="apple-touch-icon" href="../assets/img/favicon.png" />
+<meta property="og:title" content="From 40 min to 6 min: Sharding a pytest Suite Across Runners — Byresh · SDET" />
+<meta property="og:description" content="Splitting 2,400 tests across parallel GitHub Actions runners with pytest-xdist and load-balanced sharding — plus how to keep flaky-order failures from creeping back in." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://byresh-sdet.github.io/assets/img/byresh-400.jpg" />
+<meta name="twitter:card" content="summary" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/style.css" />
+<script>
+  // set theme before first paint so there is no light/dark flash
+  try {
+    document.documentElement.setAttribute(
+      'data-theme', localStorage.getItem('gs-theme') || 'dark');
+  } catch (e) { }
+</script>
+</head>
+<body data-page="blog">
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html"><span class="p">~$</span> green-suite</a>
+    <div class="nav-right">
+      <nav class="nav-links" id="nav-links">
+      <a href="../index.html">home</a>
+      <a href="../about.html">about</a>
+      <a href="../skills.html">skills</a>
+      <a href="../projects.html">projects</a>
+      <a href="../blog.html">blog</a>
+      <a href="../contact.html">contact</a>
+      </nav>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to light mode">☀</button>
+      <button class="icon-btn nav-toggle" id="nav-toggle" type="button"
+              aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">≡</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <article class="article">
+    <header class="article-head reveal in">
+      <div class="meta" style="display:flex;gap:10px;align-items:center;font-size:11.5px;color:var(--muted);flex-wrap:wrap">
+        <span class="cat">CI/CD</span><span>2026-07-11</span>
+        <span class="dim">·</span><span>9 min read</span>
+      </div>
+      <h1>From 40 min to 6 min: Sharding a pytest Suite Across Runners</h1>
+      <p style="color:var(--muted);font-size:14px;margin:0">Splitting 2,400 tests across parallel GitHub Actions runners with pytest-xdist and load-balanced sharding — plus how to keep flaky-order failures from creeping back in.</p>
+      <div class="tags" style="margin-top:12px"><span class="tag">pytest</span><span class="tag">github-actions</span><span class="tag">xdist</span></div>
+    </header>
+
+    <div class="article-body reveal in">
+<h2>Where the 40 minutes went</h2>
+<p>2,400 tests on a single runner, mostly waiting: browser startup, network round-trips, fixture
+setup repeated for tests that could have shared it. CPU sat near idle the whole time. That's
+the shape of a suite that wants to be parallel.</p>
+
+<h2>Step one: parallel within the runner</h2>
+<p><code>pytest-xdist</code> gets you most of the first win with one flag:</p>
+<pre><code>pytest -n auto --dist loadgroup</code></pre>
+<p><code>loadgroup</code> matters. Plain <code>load</code> scatters tests across workers with no regard for
+grouping, which shreds any module-scoped fixture you have. With <code>loadgroup</code> plus
+<code>@pytest.mark.xdist_group</code>, tests that share expensive setup land on the same worker.</p>
+
+<h2>Step two: shard across runners</h2>
+<p>One machine only goes so far. GitHub Actions matrices give you N machines cheaply:</p>
+<pre><code>jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6]
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install -r requirements-test.txt
+      - run: |
+          pytest -n 4 --dist loadgroup \
+                 --splits 6 --group ${{ matrix.shard }} \
+                 --junitxml=results-${{ matrix.shard }}.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: results-${{ matrix.shard }}
+          path: results-${{ matrix.shard }}.xml</code></pre>
+
+<h3>Split by duration, not by count</h3>
+<p>Six equal-sized groups are not six equal-duration groups. <code>pytest-split</code> reads a stored
+timing file and balances by measured runtime, which took our slowest shard from 11 minutes to
+just under 6:</p>
+<pre><code>pytest --store-durations   # once, on a full run
+# commit .test_durations, then --splits/--group balances properly</code></pre>
+
+<h2>What sharding breaks</h2>
+<p>Parallelism turns every latent ordering assumption into a real failure. That's not a
+regression — it's the suite finally telling the truth. Two things caused nearly all of it:</p>
+<ul>
+  <li><strong>Shared fixtures with module scope</strong> that were quietly doing global setup.
+      Anything touching a shared resource got promoted to a session-scoped fixture behind a lock,
+      or made per-test.</li>
+  <li><strong>Seeded test accounts.</strong> Two shards logging in as the same user, one logging
+      the other out. Replaced with a factory that mints a user per test and cleans up in teardown.</li>
+</ul>
+<p>To catch the rest before they hit main, run <code>pytest-randomly</code> nightly. If the suite only
+passes in declaration order, it doesn't really pass.</p>
+
+<h2>Merging results</h2>
+<p>Six JUnit files aren't a report. A final job downloads all artifacts, merges them, and
+publishes one summary — so a developer sees one number, not six jobs to click through.</p>
+<pre><code>junitparser merge results-*.xml merged.xml</code></pre>
+
+<h2>The result</h2>
+<ul>
+  <li>40 min → 6 min wall clock</li>
+  <li>Six shards × four xdist workers = 24-way parallelism</li>
+  <li>Compute cost roughly flat — same total work, less idle waiting</li>
+  <li>Three genuine ordering bugs found and fixed on the way</li>
+</ul>
+    </div>
+
+    <nav class="article-nav">
+      <span><a href="killing-flaky-tests-playwright.html">← Killing Flaky Tests: Auto-Retry vs. Root-Cause</a></span>
+      <span><a href="contract-testing-pact.html">Contract Testing REST APIs with Pact — What Broke and Why →</a></span>
+    </nav>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap fl">
+    <span>© <span data-year></span> Byresh · SDET</span>
+    <span>built with plain HTML — green means ship it · <a href="mailto:byresh.sdet@example.com">byresh.sdet@example.com</a></span>
+  </div>
+</footer>
+
+<button class="to-top" id="to-top" type="button" aria-label="Back to top">↑</button>
+
+<script src="../assets/js/main.js"></script>
+
+</body>
+</html>

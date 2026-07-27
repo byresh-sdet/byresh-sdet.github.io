@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="8+ years of test automation, CI/CD quality gates and flake forensics — the career journey behind green-suite." />
+<title>about — Byresh · SDET</title>
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="apple-touch-icon" href="assets/img/favicon.png" />
+<meta property="og:title" content="about — Byresh · SDET" />
+<meta property="og:description" content="8+ years of test automation, CI/CD quality gates and flake forensics — the career journey behind green-suite." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://byresh-sdet.github.io/assets/img/byresh-400.jpg" />
+<meta name="twitter:card" content="summary" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/style.css" />
+<script>
+  // set theme before first paint so there is no light/dark flash
+  try {
+    document.documentElement.setAttribute(
+      'data-theme', localStorage.getItem('gs-theme') || 'dark');
+  } catch (e) { }
+</script>
+</head>
+<body data-page="about">
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html"><span class="p">~$</span> green-suite</a>
+    <div class="nav-right">
+      <nav class="nav-links" id="nav-links">
+      <a href="index.html">home</a>
+      <a href="about.html">about</a>
+      <a href="skills.html">skills</a>
+      <a href="projects.html">projects</a>
+      <a href="blog.html">blog</a>
+      <a href="contact.html">contact</a>
+      </nav>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to light mode">☀</button>
+      <button class="icon-btn nav-toggle" id="nav-toggle" type="button"
+              aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">≡</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="page-head reveal in">
+    <div class="eyebrow">$ whoami</div>
+    <h1>About <span class="gradient">Byresh</span></h1>
+    <p>How I got from manual test cases to owning quality for a platform.</p>
+  </section>
+
+  <div class="sec-head reveal"><span class="pr">$</span><h2>cat ./about.md</h2></div>
+  <div class="about-grid reveal">
+    <div class="about-avatar">
+      <div class="about-avatar-inner">
+        <img src="assets/img/byresh-400.jpg"
+             srcset="assets/img/byresh-200.jpg 200w, assets/img/byresh-400.jpg 400w"
+             sizes="150px" width="400" height="400"
+             alt="Byresh" decoding="async" />
+      </div>
+    </div>
+    <div>
+      <p>I'm a <strong>Software Development Engineer in Test</strong> with 8+ years building
+        test frameworks, CI pipelines and quality gates for web, API and mobile products. My
+        work sits where testing meets infrastructure: making suites fast enough that people
+        run them, and trustworthy enough that a red build means something.</p>
+      <p>Most of what I do falls into three buckets — designing automation that survives
+        refactors, wiring quality gates into CI so problems fail early, and doing the
+        unglamorous forensics that turns a flaky suite into a deterministic one.</p>
+      <p>I'm a believer in shift-left: the cheapest bug is the one caught in review, the second
+        cheapest is caught by a test written alongside the feature. Everything after that is
+        expensive.</p>
+    </div>
+  </div>
+
+  <div class="sec-head reveal"><span class="pr">$</span><h2>git log --reverse ./career</h2>
+    <span class="note">click a node</span></div>
+  <div class="journey reveal">
+    <div class="journey-track-wrap">
+      <div class="journey-track" id="journey-track">
+        <div class="journey-line"><div class="journey-line-fill" id="journey-fill"></div></div>
+        <button class="journey-node" data-idx="0" type="button">
+          <span class="journey-node-dot"><span class="journey-node-dot-inner"></span></span>
+          <span class="journey-node-year">2017</span>
+          <span class="journey-node-role">QA Engineer</span>
+        </button>
+        <button class="journey-node" data-idx="1" type="button">
+          <span class="journey-node-dot"><span class="journey-node-dot-inner"></span></span>
+          <span class="journey-node-year">2019</span>
+          <span class="journey-node-role">Automation Engr</span>
+        </button>
+        <button class="journey-node" data-idx="2" type="button">
+          <span class="journey-node-dot"><span class="journey-node-dot-inner"></span></span>
+          <span class="journey-node-year">2021</span>
+          <span class="journey-node-role">Senior SDET</span>
+        </button>
+        <button class="journey-node" data-idx="3" type="button">
+          <span class="journey-node-dot"><span class="journey-node-dot-inner"></span></span>
+          <span class="journey-node-year">2023</span>
+          <span class="journey-node-role">Lead SDET</span>
+        </button>
+        <button class="journey-node active done" data-idx="4" type="button">
+          <span class="journey-node-dot"><span class="journey-node-dot-inner"></span></span>
+          <span class="journey-node-year">2025</span>
+          <span class="journey-node-role">SDET (current)</span>
+        </button>
+      </div>
+    </div>
+    <div class="card journey-detail" id="journey-detail"></div>
+    <div class="journey-nav">
+      <button class="btn" id="j-prev" type="button">← prev</button>
+      <button class="btn" id="j-next" type="button">next →</button>
+      <span class="journey-nav-counter" id="j-counter"></span>
+    </div>
+  </div>
+
+  <div class="sec-head reveal"><span class="pr">$</span><h2>cat ./how-i-work</h2></div>
+  <div class="card-grid">
+    <div class="card hl-card reveal">
+      <span class="hl-icon">🧭</span>
+      <h3>Risk first</h3>
+      <p>Coverage numbers are a proxy. I start from what actually hurts if it breaks, and put the
+         deepest testing there.</p>
+    </div>
+    <div class="card hl-card blue reveal">
+      <span class="hl-icon">⚡</span>
+      <h3>Fast or ignored</h3>
+      <p>A suite people wait 40 minutes for is a suite people route around. Speed is a
+         correctness feature.</p>
+    </div>
+    <div class="card hl-card violet reveal">
+      <span class="hl-icon">📊</span>
+      <h3>Evidence over opinion</h3>
+      <p>Traces, timings and flake reports. Release readiness should come off a dashboard, not
+         out of a meeting.</p>
+    </div>
+  </div>
+
+  <div class="sec-head reveal"><span class="pr">$</span><h2>cat ./education</h2></div>
+  <div class="card-grid two">
+    <div class="card reveal">
+      <h4>degree</h4>
+      <h3>Bachelor of Engineering</h3>
+      <p>Computer Science &amp; Engineering<br /><span class="dim">TODO: update institution and years</span></p>
+    </div>
+    <div class="card reveal">
+      <h4>always on</h4>
+      <h3>Continuous learning</h3>
+      <p>Framework internals, distributed systems failure modes, and whatever the last
+         production incident taught me. Notes go in the <a href="blog.html">blog</a>.</p>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap fl">
+    <span>© <span data-year></span> Byresh · SDET</span>
+    <span>built with plain HTML — green means ship it · <a href="mailto:byresh.sdet@example.com">byresh.sdet@example.com</a></span>
+  </div>
+</footer>
+
+<button class="to-top" id="to-top" type="button" aria-label="Back to top">↑</button>
+
+<script src="assets/js/main.js"></script>
+<script>window.GS_JOURNEY = [{"year": "2017", "short": "QA Engineer", "role": "QA Engineer", "company": "First automation role", "period": "2017 \u2014 2019", "points": ["Wrote the team's first automated regression pack, replacing a 200-case manual checklist", "Owned defect triage and reporting across two Agile squads", "Built reusable page objects that cut new-test authoring time noticeably"], "tech": ["Selenium", "Java", "TestNG", "JIRA"]}, {"year": "2019", "short": "Automation Engr", "role": "Test Automation Engineer", "company": "Web + API automation", "period": "2019 \u2014 2021", "points": ["Extended coverage from UI-only to API-first, moving the bulk of assertions below the UI", "Introduced data factories so tests stopped depending on seeded environments", "Cut nightly regression runtime by roughly half through parallel execution"], "tech": ["Selenium", "REST Assured", "Python", "pytest", "Jenkins"]}, {"year": "2021", "short": "Senior SDET", "role": "Senior SDET", "company": "Framework ownership", "period": "2021 \u2014 2023", "points": ["Rebuilt the framework on Playwright, retiring a brittle Selenium suite", "Added trace-on-failure and a flake report that made retries visible instead of silent", "Set the merge-queue quality gate that blocks on smoke + contract verification"], "tech": ["Playwright", "TypeScript", "pytest", "GitHub Actions", "Docker"]}, {"year": "2023", "short": "Lead SDET", "role": "Lead SDET", "company": "Platform quality", "period": "2023 \u2014 2025", "points": ["Sharded 2,400 tests across parallel runners, taking the suite from 40 min to 6 min", "Wired k6 thresholds into CI so performance regressions fail the build", "Drove flaky tests in CI to zero and kept them there with a quarantine policy"], "tech": ["Playwright", "k6", "Pact", "Kubernetes", "Allure", "Grafana"]}, {"year": "2025", "short": "SDET (current)", "role": "Software Development Engineer in Test", "company": "Quality engineering", "period": "2025 \u2014 present", "points": ["Own end-to-end quality strategy across web, API and mobile surfaces", "Mentor engineers on test design, shift-left practice and CI hygiene", "Report release readiness from pipeline data rather than gut feel"], "tech": ["Playwright", "pytest", "Appium", "GitHub Actions", "k6", "Pact"]}];</script>
+<script>
+(function () {
+  var data = window.GS_JOURNEY || [];
+  var track = document.getElementById('journey-track');
+  if (!track) return;
+  var fill = document.getElementById('journey-fill');
+  var detail = document.getElementById('journey-detail');
+  var prev = document.getElementById('j-prev');
+  var next = document.getElementById('j-next');
+  var counter = document.getElementById('j-counter');
+  var nodes = Array.prototype.slice.call(track.querySelectorAll('.journey-node'));
+  var idx = data.length - 1;
+
+  function render() {
+    var j = data[idx];
+    nodes.forEach(function (n, i) {
+      n.classList.toggle('active', i === idx);
+      n.classList.toggle('done', i <= idx);
+    });
+    if (fill) {
+      fill.style.width = (data.length < 2 ? 100 : (idx / (data.length - 1)) * 100) + '%';
+    }
+    detail.innerHTML =
+      '<div class="journey-detail-top">' +
+        '<div>' +
+          '<h3 class="journey-detail-role">' + j.role + '</h3>' +
+          '<div class="journey-detail-company">' + j.company + '</div>' +
+        '</div>' +
+        '<div class="journey-detail-period">' + j.period + '</div>' +
+      '</div>' +
+      '<ul class="journey-detail-points">' +
+        j.points.map(function (p) { return '<li>' + p + '</li>'; }).join('') +
+      '</ul>' +
+      '<div class="journey-detail-tech">' +
+        j.tech.map(function (t) { return '<span>' + t + '</span>'; }).join('') +
+      '</div>';
+    counter.textContent = (idx + 1) + ' / ' + data.length;
+    prev.disabled = idx === 0;
+    next.disabled = idx === data.length - 1;
+  }
+
+  track.addEventListener('click', function (ev) {
+    var b = ev.target.closest('.journey-node');
+    if (!b) return;
+    idx = parseInt(b.dataset.idx, 10);
+    render();
+  });
+  prev.addEventListener('click', function () { if (idx > 0) { idx--; render(); } });
+  next.addEventListener('click', function () { if (idx < data.length - 1) { idx++; render(); } });
+  render();
+})();
+</script>
+</body>
+</html>

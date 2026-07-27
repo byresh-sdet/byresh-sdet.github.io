@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="p95 latency and error-rate thresholds wired into CI so a regression fails the build, not the on-call engineer. Includes the scenario model and a Grafana breakdown." />
+<title>Load Testing with k6 — Thresholds That Actually Gate a Release — Byresh · SDET</title>
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="apple-touch-icon" href="../assets/img/favicon.png" />
+<meta property="og:title" content="Load Testing with k6 — Thresholds That Actually Gate a Release — Byresh · SDET" />
+<meta property="og:description" content="p95 latency and error-rate thresholds wired into CI so a regression fails the build, not the on-call engineer. Includes the scenario model and a Grafana breakdown." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://byresh-sdet.github.io/assets/img/byresh-400.jpg" />
+<meta name="twitter:card" content="summary" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/style.css" />
+<script>
+  // set theme before first paint so there is no light/dark flash
+  try {
+    document.documentElement.setAttribute(
+      'data-theme', localStorage.getItem('gs-theme') || 'dark');
+  } catch (e) { }
+</script>
+</head>
+<body data-page="blog">
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html"><span class="p">~$</span> green-suite</a>
+    <div class="nav-right">
+      <nav class="nav-links" id="nav-links">
+      <a href="../index.html">home</a>
+      <a href="../about.html">about</a>
+      <a href="../skills.html">skills</a>
+      <a href="../projects.html">projects</a>
+      <a href="../blog.html">blog</a>
+      <a href="../contact.html">contact</a>
+      </nav>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to light mode">☀</button>
+      <button class="icon-btn nav-toggle" id="nav-toggle" type="button"
+              aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">≡</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <article class="article">
+    <header class="article-head reveal in">
+      <div class="meta" style="display:flex;gap:10px;align-items:center;font-size:11.5px;color:var(--muted);flex-wrap:wrap">
+        <span class="cat">Performance</span><span>2026-06-20</span>
+        <span class="dim">·</span><span>10 min read</span>
+      </div>
+      <h1>Load Testing with k6 — Thresholds That Actually Gate a Release</h1>
+      <p style="color:var(--muted);font-size:14px;margin:0">p95 latency and error-rate thresholds wired into CI so a regression fails the build, not the on-call engineer. Includes the scenario model and a Grafana breakdown.</p>
+      <div class="tags" style="margin-top:12px"><span class="tag">k6</span><span class="tag">load</span><span class="tag">thresholds</span></div>
+    </header>
+
+    <div class="article-body reveal in">
+<h2>A load test that can't fail is a report</h2>
+<p>Most performance testing produces a PDF nobody reads. The change that made ours matter was
+small: give the test a pass/fail opinion, and put it in the pipeline. k6 does this natively
+with thresholds — if one is breached, the process exits non-zero and the deploy stops.</p>
+
+<h2>Model the scenarios, not "the load"</h2>
+<p>Real traffic isn't one flat shape. Ours is a steady browse pattern with a checkout spike, so
+the test says exactly that:</p>
+<pre><code>export const options = {
+  scenarios: {
+    browse: {
+      executor: 'ramping-vus',
+      startVUs: 0,
+      stages: [
+        { duration: '2m', target: 200 },
+        { duration: '5m', target: 200 },
+        { duration: '2m', target: 0 },
+      ],
+      exec: 'browse',
+    },
+    checkout_spike: {
+      executor: 'constant-arrival-rate',
+      rate: 40, timeUnit: '1s',
+      duration: '5m',
+      preAllocatedVUs: 100,
+      startTime: '3m',
+      exec: 'checkout',
+    },
+  },
+  thresholds: {
+    'http_req_failed': ['rate&lt;0.01'],
+    'http_req_duration{scenario:browse}': ['p(95)&lt;400'],
+    'http_req_duration{scenario:checkout}': ['p(95)&lt;900', 'p(99)&lt;2000'],
+    'checks': ['rate&gt;0.99'],
+  },
+};</code></pre>
+
+<p>Two things worth copying. First, <strong>per-scenario thresholds</strong> — checkout is legitimately
+slower than browse, and one global p95 hides both. Second, <code>constant-arrival-rate</code> for the
+spike: it holds throughput fixed even as the system slows, which is what real users do. VU-based
+executors accidentally back off under stress and flatter your results.</p>
+
+<h2>Pick thresholds from data, not vibes</h2>
+<p>We set each number from the current production p95 plus a 20% tolerance, pulled from the same
+dashboards the SRE team uses. Numbers invented in a meeting either never fail or always fail;
+either way people stop trusting them within a month.</p>
+
+<h2>Wiring it into CI</h2>
+<pre><code>- name: Load test
+  run: k6 run --out experimental-prometheus-rw perf/checkout.js
+  env:
+    K6_PROMETHEUS_RW_SERVER_URL: ${{ secrets.PROM_URL }}
+    BASE_URL: https://staging.internal</code></pre>
+<p>Streaming to Prometheus means the Grafana panel and the pass/fail gate read the same data. When
+a build fails you land on a dashboard filtered to that run, not a wall of terminal output.</p>
+
+<h2>Reading a failure</h2>
+<p>The useful move is to correlate three lines: p95 latency, requests per second, and error rate.</p>
+<ul>
+  <li>Latency climbs, throughput flat → a queue or a lock, usually a connection pool.</li>
+  <li>Latency and throughput both fall → something upstream is shedding load.</li>
+  <li>Latency fine, errors spike → a rate limiter or a dependency timing out.</li>
+</ul>
+<p>The regression that justified the whole project was the first shape: p95 tripled at 180 VUs
+because the DB pool was capped at 20 connections. Config change, one line, caught before release.</p>
+
+<blockquote>Set the threshold where you would actually page someone. If you wouldn't wake up for it,
+it isn't a gate — it's a metric.</blockquote>
+    </div>
+
+    <nav class="article-nav">
+      <span><a href="selenium-grid-docker-actions.html">← A Parallel Selenium Grid with Docker + GitHub Actions</a></span>
+      <span><a href="appium-mobile-automation.html">Stable Appium Automation on Real Android Devices →</a></span>
+    </nav>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap fl">
+    <span>© <span data-year></span> Byresh · SDET</span>
+    <span>built with plain HTML — green means ship it · <a href="mailto:byresh.sdet@example.com">byresh.sdet@example.com</a></span>
+  </div>
+</footer>
+
+<button class="to-top" id="to-top" type="button" aria-label="Back to top">↑</button>
+
+<script src="../assets/js/main.js"></script>
+
+</body>
+</html>

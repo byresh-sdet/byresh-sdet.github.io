@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Test automation frameworks, sharded CI pipelines, contract testing gates and performance suites." />
+<title>projects — Byresh · SDET</title>
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="apple-touch-icon" href="assets/img/favicon.png" />
+<meta property="og:title" content="projects — Byresh · SDET" />
+<meta property="og:description" content="Test automation frameworks, sharded CI pipelines, contract testing gates and performance suites." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://byresh-sdet.github.io/assets/img/byresh-400.jpg" />
+<meta name="twitter:card" content="summary" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/style.css" />
+<script>
+  // set theme before first paint so there is no light/dark flash
+  try {
+    document.documentElement.setAttribute(
+      'data-theme', localStorage.getItem('gs-theme') || 'dark');
+  } catch (e) { }
+</script>
+</head>
+<body data-page="projects">
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html"><span class="p">~$</span> green-suite</a>
+    <div class="nav-right">
+      <nav class="nav-links" id="nav-links">
+      <a href="index.html">home</a>
+      <a href="about.html">about</a>
+      <a href="skills.html">skills</a>
+      <a href="projects.html">projects</a>
+      <a href="blog.html">blog</a>
+      <a href="contact.html">contact</a>
+      </nav>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to light mode">☀</button>
+      <button class="icon-btn nav-toggle" id="nav-toggle" type="button"
+              aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">≡</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="page-head reveal in">
+    <div class="eyebrow">$ ls ./projects</div>
+    <h1>Things I've <span class="gradient">built</span></h1>
+    <p>Frameworks, pipelines and quality gates — with the numbers they actually moved.</p>
+  </section>
+
+  <div class="sec-head reveal"><span class="pr">$</span><h2>ls -l ./projects</h2>
+    <span class="note">6 entries</span></div>
+
+  <div class="proj-grid">
+    <article class="proj reveal">
+      <div class="proj-banner" style="background: var(--g-green)">🎭</div>
+      <div class="proj-body">
+        <h3>Playwright E2E Framework</h3>
+        <div class="proj-domain">Web · TypeScript</div>
+        <p>Trace-first end-to-end framework with fixture-scoped auth, per-test data factories and a flake report that makes every retry visible instead of silent.</p>
+        <div class="proj-metrics"><div><b>2,400+</b>tests</div><div><b>6 min</b>full run</div></div>
+        <div class="journey-detail-tech"><span>Playwright</span><span>TypeScript</span><span>GitHub Actions</span><span>Allure</span></div>
+      </div>
+    </article>
+    <article class="proj reveal">
+      <div class="proj-banner" style="background: var(--g-blue)">⚙</div>
+      <div class="proj-body">
+        <h3>Sharded pytest Pipeline</h3>
+        <div class="proj-domain">CI/CD · Python</div>
+        <p>Duration-balanced sharding across a runner matrix, with merged JUnit reporting so a developer sees one verdict rather than six jobs.</p>
+        <div class="proj-metrics"><div><b>40→6</b>minutes</div><div><b>24×</b>parallelism</div></div>
+        <div class="journey-detail-tech"><span>pytest</span><span>pytest-xdist</span><span>pytest-split</span><span>Actions</span></div>
+      </div>
+    </article>
+    <article class="proj reveal">
+      <div class="proj-banner" style="background: var(--g-violet)">🔌</div>
+      <div class="proj-body">
+        <h3>Contract Testing Gate</h3>
+        <div class="proj-domain">API · Pact</div>
+        <p>Consumer-driven contracts with a broker and a can-i-deploy gate — three breaking API changes stopped before they reached staging.</p>
+        <div class="proj-metrics"><div><b>3</b>breakages caught</div><div><b>0</b>reached prod</div></div>
+        <div class="journey-detail-tech"><span>Pact</span><span>Node</span><span>Docker</span><span>Broker</span></div>
+      </div>
+    </article>
+    <article class="proj reveal">
+      <div class="proj-banner" style="background: var(--g-warm)">📈</div>
+      <div class="proj-body">
+        <h3>k6 Performance Gate</h3>
+        <div class="proj-domain">Performance</div>
+        <p>Scenario-modelled load tests with per-scenario p95/p99 thresholds streamed to Prometheus, wired so a regression fails the build.</p>
+        <div class="proj-metrics"><div><b>p95</b>gated</div><div><b><1%</b>error budget</div></div>
+        <div class="journey-detail-tech"><span>k6</span><span>Prometheus</span><span>Grafana</span><span>Actions</span></div>
+      </div>
+    </article>
+    <article class="proj reveal">
+      <div class="proj-banner" style="background: var(--g-pink)">🐳</div>
+      <div class="proj-body">
+        <h3>Ephemeral Selenium Grid</h3>
+        <div class="proj-domain">Cross-browser</div>
+        <p>Per-run hub and node containers with a readiness gate and log capture on failure — no standing grid, no cross-team contention.</p>
+        <div class="proj-metrics"><div><b>22→7</b>minutes</div><div><b>2</b>browsers</div></div>
+        <div class="journey-detail-tech"><span>Selenium Grid</span><span>Docker Compose</span><span>Actions</span></div>
+      </div>
+    </article>
+    <article class="proj reveal">
+      <div class="proj-banner" style="background: var(--g-lilac)">📱</div>
+      <div class="proj-body">
+        <h3>Mobile Regression Suite</h3>
+        <div class="proj-domain">Mobile · Android</div>
+        <p>Accessibility-id-first locators, animation-disabled capabilities and an emulator/real-device split that keeps mobile regression under ten minutes.</p>
+        <div class="proj-metrics"><div><b>9 min</b>regression</div><div><b>3</b>OS versions</div></div>
+        <div class="journey-detail-tech"><span>Appium</span><span>Python</span><span>UiAutomator2</span><span>Device farm</span></div>
+      </div>
+    </article>
+  </div>
+
+  <div class="sec-head reveal"><span class="pr">$</span><h2>echo $NEXT</h2></div>
+  <div class="card reveal">
+    <h3>Want the detail behind any of these?</h3>
+    <p>Most of them have a write-up in the <a href="blog.html">blog</a> covering what broke,
+       what the fix was, and what I'd do differently. Or just
+       <a href="contact.html">send a message</a>.</p>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap fl">
+    <span>© <span data-year></span> Byresh · SDET</span>
+    <span>built with plain HTML — green means ship it · <a href="mailto:byresh.sdet@example.com">byresh.sdet@example.com</a></span>
+  </div>
+</footer>
+
+<button class="to-top" id="to-top" type="button" aria-label="Back to top">↑</button>
+
+<script src="assets/js/main.js"></script>
+
+</body>
+</html>
