@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="Provisioning, agent install, connectivity validation and behaviour verification — the full lifecycle of a scale test large enough that the harness becomes the hard part." />
-<title>Scale Testing Across 7,000 VMs and Six OS Families — Byresh Thimmeshappa</title>
+<meta name="description" content="Provisioning, agent install, connectivity validation and behaviour verification: the full lifecycle of a scale test large enough that the harness becomes the hard part." />
+<title>Scale Testing Across 7,000 VMs and Six OS Families | Byresh Thimmeshappa</title>
 <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
 <link rel="apple-touch-icon" href="../assets/img/favicon.png" />
-<meta property="og:title" content="Scale Testing Across 7,000 VMs and Six OS Families — Byresh Thimmeshappa" />
-<meta property="og:description" content="Provisioning, agent install, connectivity validation and behaviour verification — the full lifecycle of a scale test large enough that the harness becomes the hard part." />
+<meta property="og:title" content="Scale Testing Across 7,000 VMs and Six OS Families | Byresh Thimmeshappa" />
+<meta property="og:description" content="Provisioning, agent install, connectivity validation and behaviour verification: the full lifecycle of a scale test large enough that the harness becomes the hard part." />
 <meta property="og:type" content="website" />
 <meta property="og:image" content="https://byresh-sdet.github.io/assets/img/byresh-400.jpg" />
 <meta name="twitter:card" content="summary" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="../assets/css/style.css?v=aebde1f2" />
+<link rel="stylesheet" href="../assets/css/style.css?v=3a7c5a06" />
 <script>
   // set theme before first paint so there is no light/dark flash
   try {
@@ -53,7 +53,7 @@
         <span class="dim">·</span><span>13 min read</span>
       </div>
       <h1>Scale Testing Across 7,000 VMs and Six OS Families</h1>
-      <p style="color:var(--muted);font-size:14px;margin:0">Provisioning, agent install, connectivity validation and behaviour verification — the full lifecycle of a scale test large enough that the harness becomes the hard part.</p>
+      <p style="color:var(--muted);font-size:14px;margin:0">Provisioning, agent install, connectivity validation and behaviour verification: the full lifecycle of a scale test large enough that the harness becomes the hard part.</p>
       <div class="tags" style="margin-top:12px"><span class="tag">scale</span><span class="tag">aws</span><span class="tag">performance</span></div>
     </header>
 
@@ -67,14 +67,14 @@ looking.</p>
 
 <h2>The lifecycle, in order</h2>
 <ol>
-  <li><strong>Provisioning</strong> — spin up fleets across cloud and on-premise virtualisation,
+  <li><strong>Provisioning</strong>: spin up fleets across cloud and on-premise virtualisation,
       spanning six OS families from legacy Windows Server through current RHEL and Ubuntu.</li>
-  <li><strong>Agent installation</strong> — deploy the product agent onto every host. This is
+  <li><strong>Agent installation</strong>: deploy the product agent onto every host. This is
       where OS diversity hurts most; a working installer on one family proves nothing about the
       next.</li>
-  <li><strong>Connectivity validation</strong> — confirm every agent registered with the
+  <li><strong>Connectivity validation</strong>: confirm every agent registered with the
       management service. Not most. Every one, counted.</li>
-  <li><strong>Behaviour verification</strong> — only now does the actual test run, under
+  <li><strong>Behaviour verification</strong>: only now does the actual test run, under
       sustained load across a heterogeneous fleet.</li>
 </ol>
 <p>Steps one to three are the unglamorous majority of the work. Skipping the counting in step
@@ -83,7 +83,7 @@ three is how you get a "successful" scale run that quietly tested 5,800 VMs.</p>
 <h3>Count what registered, don't assume it</h3>
 <p>The single most valuable piece of the harness is a reconciliation step: what was provisioned,
 versus what installed, versus what registered. Three numbers that should match and frequently
-don't. The gap is either a real product bug at scale or a harness bug — and both are worth
+don't. The gap is either a real product bug at scale or a harness bug, and both are worth
 knowing before you interpret any performance figure.</p>
 
 <blockquote>A scale test that can't tell you its own denominator isn't measuring anything.</blockquote>
@@ -91,15 +91,15 @@ knowing before you interpret any performance figure.</p>
 <h2>Six OS families is the multiplier</h2>
 <p>Scale and compatibility interact in ways neither shows alone. Behaviour that is fine on
 current Ubuntu can degrade badly on an old Windows Server under the same load, and you only see
-it when both are in the same run. Keeping all six families in one fleet — rather than testing
-each in isolation — is what surfaces the interesting failures.</p>
+it when both are in the same run. Keeping all six families in one fleet, rather than testing
+each in isolation, is what surfaces the interesting failures.</p>
 <p>It also makes the harness messier: different install mechanisms, different log locations,
-different ways of asking "is the service up". Worth it.</p>
+different ways of asking "is the service up". The extra mess is worth it.</p>
 
 <h2>Reading the results</h2>
 <p>Bottleneck analysis is where scale testing pays off. Watching CPU, memory, throughput and
 latency together across the fleet points at the constraint, and it's rarely where people guess.
-The recurring finding in our case was on the data layer — slow queries that were invisible at
+The recurring finding in our case was on the data layer: slow queries that were invisible at
 small scale and dominant under sustained fleet-wide load, addressed through query and replica
 configuration work.</p>
 
@@ -119,13 +119,13 @@ capacity and to customers planning theirs, which is a much higher bar than "the 
 <footer>
   <div class="wrap fl">
     <span>© <span data-year></span> Byresh · SDET</span>
-    <span>built with plain HTML — green means ship it · <a href="mailto:byresh.151993@gmail.com">byresh.151993@gmail.com</a></span>
+    <span>built with plain HTML · green means ship it · <a href="mailto:byresh.151993@gmail.com">byresh.151993@gmail.com</a></span>
   </div>
 </footer>
 
 <button class="to-top" id="to-top" type="button" aria-label="Back to top">↑</button>
 
-<script src="../assets/js/main.js?v=adcb442e"></script>
+<script src="../assets/js/main.js?v=82788895"></script>
 
 </body>
 </html>

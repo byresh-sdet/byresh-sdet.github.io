@@ -4,10 +4,10 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="description" content="Three per-surface frameworks collapsed into a single Python and Robot Framework suite running in one CI pipeline with real-device testing." />
-<title>One Suite for API, Web and Mobile with Robot Framework — Byresh Thimmeshappa</title>
+<title>One Suite for API, Web and Mobile with Robot Framework | Byresh Thimmeshappa</title>
 <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
 <link rel="apple-touch-icon" href="../assets/img/favicon.png" />
-<meta property="og:title" content="One Suite for API, Web and Mobile with Robot Framework — Byresh Thimmeshappa" />
+<meta property="og:title" content="One Suite for API, Web and Mobile with Robot Framework | Byresh Thimmeshappa" />
 <meta property="og:description" content="Three per-surface frameworks collapsed into a single Python and Robot Framework suite running in one CI pipeline with real-device testing." />
 <meta property="og:type" content="website" />
 <meta property="og:image" content="https://byresh-sdet.github.io/assets/img/byresh-400.jpg" />
@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="../assets/css/style.css?v=aebde1f2" />
+<link rel="stylesheet" href="../assets/css/style.css?v=3a7c5a06" />
 <script>
   // set theme before first paint so there is no light/dark flash
   try {
@@ -70,24 +70,24 @@ release pass?" without opening all three.</p>
 action, and nothing about that name has to reveal whether it's driving HTTP, a browser, or a
 device. So the layering falls out naturally:</p>
 <ul>
-  <li><strong>Business keywords</strong> — <em>Create Trip</em>, <em>Trigger Diagnostic Alert</em>.
+  <li><strong>Business keywords</strong>: <em>Create Trip</em>, <em>Trigger Diagnostic Alert</em>.
       Readable by people who don't write tests, stable across refactors.</li>
-  <li><strong>Technical keywords</strong> — the surface-specific work, backed by custom Python
+  <li><strong>Technical keywords</strong>: the surface-specific work, backed by custom Python
       libraries where the built-ins ran out.</li>
-  <li><strong>Shared services</strong> — auth, test data, config, reporting. Written once, used
+  <li><strong>Shared services</strong>: auth, test data, config, reporting. Written once, used
       by all three surfaces. This is where the duplication actually was.</li>
 </ul>
 <p>Custom Python libraries matter. Robot is a good orchestration layer and a bad place to write
 logic; anything with real branching belongs in Python, exposed as a keyword.</p>
 
 <h2>One pipeline</h2>
-<p>Consolidating into a single Jenkins pipeline — including real-device mobile execution —
+<p>Consolidating into a single Jenkins pipeline, including real-device mobile execution,
 changed the reporting more than the running. One run, one report, one verdict. "Did this
 release pass?" became a question with one answer, which sounds trivial and was the main thing
 people wanted.</p>
 
 <h3>Real devices in CI</h3>
-<p>Real-device testing is where mobile gets honest — and where flake concentrates. What kept it
+<p>Real-device testing is where mobile gets honest, and where flake concentrates. What kept it
 manageable: treat device availability as an explicit precondition rather than an assumption,
 and fail the job clearly when a device isn't there instead of letting tests fail mysteriously.
 A pipeline that can't get a device should say so.</p>
@@ -100,7 +100,7 @@ test failure's clothes.</blockquote>
 the real wins and they'd apply in any framework.</p>
 <p><strong>Change:</strong> I'd push harder on moving logic into Python earlier. The temptation
 to solve one more thing in Robot syntax is strong and it always costs more later.</p>
-<p>The headline is three frameworks becoming one. The value was the shared layer underneath —
+<p>The headline is three frameworks becoming one. The value was the shared layer underneath;
 the consolidation just forced us to build it.</p>
     </div>
 
@@ -114,13 +114,13 @@ the consolidation just forced us to build it.</p>
 <footer>
   <div class="wrap fl">
     <span>© <span data-year></span> Byresh · SDET</span>
-    <span>built with plain HTML — green means ship it · <a href="mailto:byresh.151993@gmail.com">byresh.151993@gmail.com</a></span>
+    <span>built with plain HTML · green means ship it · <a href="mailto:byresh.151993@gmail.com">byresh.151993@gmail.com</a></span>
   </div>
 </footer>
 
 <button class="to-top" id="to-top" type="button" aria-label="Back to top">↑</button>
 
-<script src="../assets/js/main.js?v=adcb442e"></script>
+<script src="../assets/js/main.js?v=82788895"></script>
 
 </body>
 </html>

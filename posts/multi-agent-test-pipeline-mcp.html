@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="Four agent roles — extraction, generation, review, automation — turning tickets and OpenAPI specs into runnable API tests, with a human gate at every stage." />
-<title>Designing a Multi-Agent Test Pipeline with MCP — Byresh Thimmeshappa</title>
+<meta name="description" content="Four agent roles (extraction, generation, review, automation) turning tickets and OpenAPI specs into runnable API tests, with a human gate at every stage." />
+<title>Designing a Multi-Agent Test Pipeline with MCP | Byresh Thimmeshappa</title>
 <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
 <link rel="apple-touch-icon" href="../assets/img/favicon.png" />
-<meta property="og:title" content="Designing a Multi-Agent Test Pipeline with MCP — Byresh Thimmeshappa" />
-<meta property="og:description" content="Four agent roles — extraction, generation, review, automation — turning tickets and OpenAPI specs into runnable API tests, with a human gate at every stage." />
+<meta property="og:title" content="Designing a Multi-Agent Test Pipeline with MCP | Byresh Thimmeshappa" />
+<meta property="og:description" content="Four agent roles (extraction, generation, review, automation) turning tickets and OpenAPI specs into runnable API tests, with a human gate at every stage." />
 <meta property="og:type" content="website" />
 <meta property="og:image" content="https://byresh-sdet.github.io/assets/img/byresh-400.jpg" />
 <meta name="twitter:card" content="summary" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="../assets/css/style.css?v=aebde1f2" />
+<link rel="stylesheet" href="../assets/css/style.css?v=3a7c5a06" />
 <script>
   // set theme before first paint so there is no light/dark flash
   try {
@@ -53,7 +53,7 @@
         <span class="dim">·</span><span>12 min read</span>
       </div>
       <h1>Designing a Multi-Agent Test Pipeline with MCP</h1>
-      <p style="color:var(--muted);font-size:14px;margin:0">Four agent roles — extraction, generation, review, automation — turning tickets and OpenAPI specs into runnable API tests, with a human gate at every stage.</p>
+      <p style="color:var(--muted);font-size:14px;margin:0">Four agent roles (extraction, generation, review, automation) turning tickets and OpenAPI specs into runnable API tests, with a human gate at every stage.</p>
       <div class="tags" style="margin-top:12px"><span class="tag">mcp</span><span class="tag">agents</span><span class="tag">llm</span></div>
     </header>
 
@@ -61,7 +61,7 @@
 <h2>Why more than one agent</h2>
 <p>The obvious version of "AI writes my tests" is one prompt: hand a model a ticket, ask for a
 test, paste the result. It works for demos and falls apart on real specs, because a single
-prompt is doing four unrelated jobs at once — reading requirements, designing cases, judging
+prompt is doing four unrelated jobs at once: reading requirements, designing cases, judging
 whether those cases are any good, and producing runnable code.</p>
 <p>Splitting those into separate roles helped for a reason that has little to do with model
 capability: <strong>each role gets its own success criterion, and each boundary is a place a
@@ -69,20 +69,20 @@ human can stand.</strong></p>
 
 <h3>The four roles</h3>
 <ol>
-  <li><strong>Requirements extraction</strong> — reads the ticket and the OpenAPI spec, emits a
+  <li><strong>Requirements extraction</strong>: reads the ticket and the OpenAPI spec, emits a
       structured list of testable behaviours. No test cases yet, just claims about what the
       system should do.</li>
-  <li><strong>Test generation</strong> — turns each behaviour into concrete cases: inputs,
+  <li><strong>Test generation</strong>: turns each behaviour into concrete cases: inputs,
       expected status, expected schema, edge conditions.</li>
-  <li><strong>Reviewer</strong> — judges the generated cases against the original spec. Looks for
+  <li><strong>Reviewer</strong>: judges the generated cases against the original spec. Looks for
       invented endpoints, assertions that can't fail, and missing negative paths.</li>
-  <li><strong>Automation</strong> — writes the actual runnable test code and wires it into CI.</li>
+  <li><strong>Automation</strong>: writes the actual runnable test code and wires it into CI.</li>
 </ol>
 
 <h2>The gate matters more than the agents</h2>
 <p>Every stage boundary is a human approval point. Nothing merges because a model said it was
-fine. This is the part I'd keep even if the models got twice as good, because the failure mode
-of generated tests is not "obviously broken" — it's <em>plausible and wrong</em>. A test that
+fine. I would keep this even if the models got twice as good, because the failure mode of
+generated tests is not "obviously broken"; it is <em>plausible and wrong</em>. A test that
 asserts a 200 and nothing else passes forever and tells you nothing.</p>
 
 <blockquote>An unreviewed generated test is worse than no test: it occupies the slot where a
@@ -92,7 +92,7 @@ real test would have gone, and it reports green.</blockquote>
 <p>The automation agent is allowed to repair its own tests, but only within a narrow band. The
 policy that took the longest to get right:</p>
 <ul>
-  <li><strong>Auto-heal</strong> locator drift and environment drift — a renamed selector, a
+  <li><strong>Auto-heal</strong> locator drift and environment drift: a renamed selector, a
       moved base URL, a changed test-data fixture. Mechanical breakage with no behavioural
       meaning.</li>
   <li><strong>Fail loudly</strong> when the behaviour or the contract has changed. A field that
@@ -102,8 +102,7 @@ policy that took the longest to get right:</p>
       shows up in a report a person reads.</li>
 </ul>
 <p>Without the third rule you build a machine that mends its own tests until they assert nothing.
-That's the whole risk of self-healing in one sentence, and it's why the audit log isn't
-optional.</p>
+That is the risk of self-healing, and it is why the audit log is not optional.</p>
 
 <h2>Orchestration</h2>
 <p>The prototype wires the stages with n8n and the Claude API, with tool integrations for the
@@ -111,7 +110,7 @@ issue tracker, the source host and Slack. End to end it runs: ticket intake → 
 behaviours → generated cases → review → automation → CI execution → summary posted back to
 Slack.</p>
 <p>Using a workflow tool rather than bespoke glue was the right call early. Most of the iteration
-was on <em>where the humans stand</em> and what each agent is told, not on plumbing — and moving
+was on <em>where the humans stand</em> and what each agent is told, not on plumbing, and moving
 a gate is a drag-and-drop instead of a refactor.</p>
 
 <h2>What I'd tell someone starting</h2>
@@ -135,13 +134,13 @@ a gate is a drag-and-drop instead of a refactor.</p>
 <footer>
   <div class="wrap fl">
     <span>© <span data-year></span> Byresh · SDET</span>
-    <span>built with plain HTML — green means ship it · <a href="mailto:byresh.151993@gmail.com">byresh.151993@gmail.com</a></span>
+    <span>built with plain HTML · green means ship it · <a href="mailto:byresh.151993@gmail.com">byresh.151993@gmail.com</a></span>
   </div>
 </footer>
 
 <button class="to-top" id="to-top" type="button" aria-label="Back to top">↑</button>
 
-<script src="../assets/js/main.js?v=adcb442e"></script>
+<script src="../assets/js/main.js?v=82788895"></script>
 
 </body>
 </html>

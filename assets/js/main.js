@@ -1,5 +1,5 @@
 /* ============================================================
-   green-suite — shared site behaviour
+   green-suite | shared site behaviour
    theme toggle · mobile nav · scroll reveal · back to top
    ============================================================ */
 (function () {
