@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Provisioning, agent install, connectivity validation and behaviour verification — the full lifecycle of a scale test large enough that the harness becomes the hard part." />
+<title>Scale Testing Across 7,000 VMs and Six OS Families — Byresh Thimmeshappa</title>
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="apple-touch-icon" href="../assets/img/favicon.png" />
+<meta property="og:title" content="Scale Testing Across 7,000 VMs and Six OS Families — Byresh Thimmeshappa" />
+<meta property="og:description" content="Provisioning, agent install, connectivity validation and behaviour verification — the full lifecycle of a scale test large enough that the harness becomes the hard part." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://byresh-sdet.github.io/assets/img/byresh-400.jpg" />
+<meta name="twitter:card" content="summary" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/style.css?v=aebde1f2" />
+<script>
+  // set theme before first paint so there is no light/dark flash
+  try {
+    document.documentElement.setAttribute(
+      'data-theme', localStorage.getItem('gs-theme') || 'dark');
+  } catch (e) { }
+</script>
+</head>
+<body data-page="blog">
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html"><span class="p">~$</span> green-suite</a>
+    <div class="nav-right">
+      <nav class="nav-links" id="nav-links">
+      <a href="../index.html">home</a>
+      <a href="../about.html">about</a>
+      <a href="../skills.html">skills</a>
+      <a href="../projects.html">projects</a>
+      <a href="../blog.html">blog</a>
+      <a href="../contact.html">contact</a>
+      </nav>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to light mode">☀</button>
+      <button class="icon-btn nav-toggle" id="nav-toggle" type="button"
+              aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">≡</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <article class="article">
+    <header class="article-head reveal in">
+      <div class="meta" style="display:flex;gap:10px;align-items:center;font-size:11.5px;color:var(--muted);flex-wrap:wrap">
+        <span class="cat">Scale</span><span>2026-06-30</span>
+        <span class="dim">·</span><span>13 min read</span>
+      </div>
+      <h1>Scale Testing Across 7,000 VMs and Six OS Families</h1>
+      <p style="color:var(--muted);font-size:14px;margin:0">Provisioning, agent install, connectivity validation and behaviour verification — the full lifecycle of a scale test large enough that the harness becomes the hard part.</p>
+      <div class="tags" style="margin-top:12px"><span class="tag">scale</span><span class="tag">aws</span><span class="tag">performance</span></div>
+    </header>
+
+    <div class="article-body reveal in">
+<h2>At this size, the test harness is the system under test</h2>
+<p>A hundred VMs is a big test. Seven thousand is a distributed system of its own, and most of
+the engineering goes into the harness rather than the assertions. At that scale things fail
+that simply don't at small scale: provisioning APIs throttle, a fraction of a percent of
+installs hang forever, and "did every agent actually connect?" stops being answerable by
+looking.</p>
+
+<h2>The lifecycle, in order</h2>
+<ol>
+  <li><strong>Provisioning</strong> — spin up fleets across cloud and on-premise virtualisation,
+      spanning six OS families from legacy Windows Server through current RHEL and Ubuntu.</li>
+  <li><strong>Agent installation</strong> — deploy the product agent onto every host. This is
+      where OS diversity hurts most; a working installer on one family proves nothing about the
+      next.</li>
+  <li><strong>Connectivity validation</strong> — confirm every agent registered with the
+      management service. Not most. Every one, counted.</li>
+  <li><strong>Behaviour verification</strong> — only now does the actual test run, under
+      sustained load across a heterogeneous fleet.</li>
+</ol>
+<p>Steps one to three are the unglamorous majority of the work. Skipping the counting in step
+three is how you get a "successful" scale run that quietly tested 5,800 VMs.</p>
+
+<h3>Count what registered, don't assume it</h3>
+<p>The single most valuable piece of the harness is a reconciliation step: what was provisioned,
+versus what installed, versus what registered. Three numbers that should match and frequently
+don't. The gap is either a real product bug at scale or a harness bug — and both are worth
+knowing before you interpret any performance figure.</p>
+
+<blockquote>A scale test that can't tell you its own denominator isn't measuring anything.</blockquote>
+
+<h2>Six OS families is the multiplier</h2>
+<p>Scale and compatibility interact in ways neither shows alone. Behaviour that is fine on
+current Ubuntu can degrade badly on an old Windows Server under the same load, and you only see
+it when both are in the same run. Keeping all six families in one fleet — rather than testing
+each in isolation — is what surfaces the interesting failures.</p>
+<p>It also makes the harness messier: different install mechanisms, different log locations,
+different ways of asking "is the service up". Worth it.</p>
+
+<h2>Reading the results</h2>
+<p>Bottleneck analysis is where scale testing pays off. Watching CPU, memory, throughput and
+latency together across the fleet points at the constraint, and it's rarely where people guess.
+The recurring finding in our case was on the data layer — slow queries that were invisible at
+small scale and dominant under sustained fleet-wide load, addressed through query and replica
+configuration work.</p>
+
+<h2>The output is a number someone else uses</h2>
+<p>The point of all this isn't a green tick. It's sizing guidance: what infrastructure a
+deployment of a given size actually needs. That number goes to the people planning production
+capacity and to customers planning theirs, which is a much higher bar than "the test passed."</p>
+    </div>
+
+    <nav class="article-nav">
+      <span><a href="local-llm-log-triage.html">← Local LLMs for Security Log Triage</a></span>
+      <span><a href="stress-testing-10m-incidents.html">Stress Testing to 10 Million Incidents: Finding the Breaking Point →</a></span>
+    </nav>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap fl">
+    <span>© <span data-year></span> Byresh · SDET</span>
+    <span>built with plain HTML — green means ship it · <a href="mailto:byresh.151993@gmail.com">byresh.151993@gmail.com</a></span>
+  </div>
+</footer>
+
+<button class="to-top" id="to-top" type="button" aria-label="Back to top">↑</button>
+
+<script src="../assets/js/main.js?v=adcb442e"></script>
+
+</body>
+</html>

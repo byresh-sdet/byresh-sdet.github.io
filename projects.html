@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="Test automation frameworks, sharded CI pipelines, contract testing gates and performance suites." />
-<title>projects — Byresh · SDET</title>
+<meta name="description" content="Multi-agent MCP test pipeline, local-LLM log analysis, 7,000-VM scale framework, stress harness and ChatOps tooling." />
+<title>projects — Byresh Thimmeshappa · Senior SDET</title>
 <link rel="icon" type="image/png" href="assets/img/favicon.png" />
 <link rel="apple-touch-icon" href="assets/img/favicon.png" />
-<meta property="og:title" content="projects — Byresh · SDET" />
-<meta property="og:description" content="Test automation frameworks, sharded CI pipelines, contract testing gates and performance suites." />
+<meta property="og:title" content="projects — Byresh Thimmeshappa · Senior SDET" />
+<meta property="og:description" content="Multi-agent MCP test pipeline, local-LLM log analysis, 7,000-VM scale framework, stress harness and ChatOps tooling." />
 <meta property="og:type" content="website" />
 <meta property="og:image" content="https://byresh-sdet.github.io/assets/img/byresh-400.jpg" />
 <meta name="twitter:card" content="summary" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/style.css" />
+<link rel="stylesheet" href="assets/css/style.css?v=aebde1f2" />
 <script>
   // set theme before first paint so there is no light/dark flash
   try {
@@ -50,7 +50,8 @@
   <section class="page-head reveal in">
     <div class="eyebrow">$ ls ./projects</div>
     <h1>Things I've <span class="gradient">built</span></h1>
-    <p>Frameworks, pipelines and quality gates — with the numbers they actually moved.</p>
+    <p>Pipelines, harnesses and tooling — with the numbers they actually moved. Employer and
+       product names are kept generic here by choice.</p>
   </section>
 
   <div class="sec-head reveal"><span class="pr">$</span><h2>ls -l ./projects</h2>
@@ -58,63 +59,63 @@
 
   <div class="proj-grid">
     <article class="proj reveal">
-      <div class="proj-banner" style="background: var(--g-green)">🎭</div>
+      <div class="proj-banner" style="background: var(--g-green)">🤖</div>
       <div class="proj-body">
-        <h3>Playwright E2E Framework</h3>
-        <div class="proj-domain">Web · TypeScript</div>
-        <p>Trace-first end-to-end framework with fixture-scoped auth, per-test data factories and a flake report that makes every retry visible instead of silent.</p>
-        <div class="proj-metrics"><div><b>2,400+</b>tests</div><div><b>6 min</b>full run</div></div>
-        <div class="journey-detail-tech"><span>Playwright</span><span>TypeScript</span><span>GitHub Actions</span><span>Allure</span></div>
+        <h3>Multi-Agent Test Pipeline (MCP)</h3>
+        <div class="proj-domain">Agentic AI · Python</div>
+        <p>Requirements-extraction, generation, reviewer and automation agents that ingest tickets and OpenAPI specs and produce reviewed, runnable API test automation — with a human approval gate at every stage before merge.</p>
+        <div class="proj-metrics"><div><b>4</b>agent roles</div><div><b>100%</b>human-gated</div></div>
+        <div class="journey-detail-tech"><span>MCP</span><span>Claude API</span><span>n8n</span><span>Python</span><span>OpenAPI</span></div>
       </div>
     </article>
     <article class="proj reveal">
-      <div class="proj-banner" style="background: var(--g-blue)">⚙</div>
+      <div class="proj-banner" style="background: var(--g-violet)">🔍</div>
       <div class="proj-body">
-        <h3>Sharded pytest Pipeline</h3>
-        <div class="proj-domain">CI/CD · Python</div>
-        <p>Duration-balanced sharding across a runner matrix, with merged JUnit reporting so a developer sees one verdict rather than six jobs.</p>
-        <div class="proj-metrics"><div><b>40→6</b>minutes</div><div><b>24×</b>parallelism</div></div>
-        <div class="journey-detail-tech"><span>pytest</span><span>pytest-xdist</span><span>pytest-split</span><span>Actions</span></div>
+        <h3>Local-LLM Log Analysis</h3>
+        <div class="proj-domain">Applied LLM · Triage</div>
+        <p>Parses high-volume security and system logs and pinpoints the failing component through automated pattern matching, cutting the manual triage step that used to sit in front of every root-cause analysis.</p>
+        <div class="proj-metrics"><div><b>local</b>no data egress</div><div><b>↓</b>triage time</div></div>
+        <div class="journey-detail-tech"><span>Local LLM</span><span>Python</span><span>Pattern detection</span></div>
       </div>
     </article>
     <article class="proj reveal">
-      <div class="proj-banner" style="background: var(--g-violet)">🔌</div>
+      <div class="proj-banner" style="background: var(--g-blue)">🖧</div>
       <div class="proj-body">
-        <h3>Contract Testing Gate</h3>
-        <div class="proj-domain">API · Pact</div>
-        <p>Consumer-driven contracts with a broker and a can-i-deploy gate — three breaking API changes stopped before they reached staging.</p>
-        <div class="proj-metrics"><div><b>3</b>breakages caught</div><div><b>0</b>reached prod</div></div>
-        <div class="journey-detail-tech"><span>Pact</span><span>Node</span><span>Docker</span><span>Broker</span></div>
+        <h3>Scale Test Framework</h3>
+        <div class="proj-domain">Performance · 7K VMs</div>
+        <p>Full lifecycle scale testing across 3,000–7,000 VMs and six OS families on cloud and on-premise: provisioning, agent install, connectivity validation and behaviour verification under sustained load.</p>
+        <div class="proj-metrics"><div><b>7,000</b>VMs</div><div><b>6</b>OS families</div></div>
+        <div class="journey-detail-tech"><span>Python</span><span>AWS EC2</span><span>Bash</span><span>Custom harness</span></div>
       </div>
     </article>
     <article class="proj reveal">
-      <div class="proj-banner" style="background: var(--g-warm)">📈</div>
+      <div class="proj-banner" style="background: var(--g-warm)">💥</div>
       <div class="proj-body">
-        <h3>k6 Performance Gate</h3>
-        <div class="proj-domain">Performance</div>
-        <p>Scenario-modelled load tests with per-scenario p95/p99 thresholds streamed to Prometheus, wired so a regression fails the build.</p>
-        <div class="proj-metrics"><div><b>p95</b>gated</div><div><b><1%</b>error budget</div></div>
-        <div class="journey-detail-tech"><span>k6</span><span>Prometheus</span><span>Grafana</span><span>Actions</span></div>
+        <h3>Incident Stress Harness</h3>
+        <div class="proj-domain">Performance · Capacity</div>
+        <p>Stress runs at 5–10 million security incidents to locate system breaking points. Findings fed directly into production infrastructure sizing and customer deployment guidance.</p>
+        <div class="proj-metrics"><div><b>10M</b>incidents</div><div><b>→</b>sizing guidance</div></div>
+        <div class="journey-detail-tech"><span>Locust</span><span>JMeter</span><span>Datadog</span><span>DocumentDB</span></div>
       </div>
     </article>
     <article class="proj reveal">
-      <div class="proj-banner" style="background: var(--g-pink)">🐳</div>
+      <div class="proj-banner" style="background: var(--g-pink)">💬</div>
       <div class="proj-body">
-        <h3>Ephemeral Selenium Grid</h3>
-        <div class="proj-domain">Cross-browser</div>
-        <p>Per-run hub and node containers with a readiness gate and log capture on failure — no standing grid, no cross-team contention.</p>
-        <div class="proj-metrics"><div><b>22→7</b>minutes</div><div><b>2</b>browsers</div></div>
-        <div class="journey-detail-tech"><span>Selenium Grid</span><span>Docker Compose</span><span>Actions</span></div>
+        <h3>Slack ChatOps Toolkit</h3>
+        <div class="proj-domain">Developer experience</div>
+        <p>100+ Python utilities for test execution, incident tracking and log collection, driven from Slack and adopted by support teams across every live deployment.</p>
+        <div class="proj-metrics"><div><b>100+</b>utilities</div><div><b>all</b>deployments</div></div>
+        <div class="journey-detail-tech"><span>Python</span><span>Slack API</span><span>ChatOps</span></div>
       </div>
     </article>
     <article class="proj reveal">
-      <div class="proj-banner" style="background: var(--g-lilac)">📱</div>
+      <div class="proj-banner" style="background: var(--g-lilac)">🔗</div>
       <div class="proj-body">
-        <h3>Mobile Regression Suite</h3>
-        <div class="proj-domain">Mobile · Android</div>
-        <p>Accessibility-id-first locators, animation-disabled capabilities and an emulator/real-device split that keeps mobile regression under ten minutes.</p>
-        <div class="proj-metrics"><div><b>9 min</b>regression</div><div><b>3</b>OS versions</div></div>
-        <div class="journey-detail-tech"><span>Appium</span><span>Python</span><span>UiAutomator2</span><span>Device farm</span></div>
+        <h3>Unified Automation Suite</h3>
+        <div class="proj-domain">Framework · IoT</div>
+        <p>One Python and Robot Framework suite covering API, web and mobile in a single CI pipeline with real-device testing — replacing three separate per-surface frameworks.</p>
+        <div class="proj-metrics"><div><b>3→1</b>frameworks</div><div><b>1</b>CI pipeline</div></div>
+        <div class="journey-detail-tech"><span>Robot Framework</span><span>Python</span><span>Selenium</span><span>Appium</span><span>Jenkins</span></div>
       </div>
     </article>
   </div>
@@ -122,9 +123,8 @@
   <div class="sec-head reveal"><span class="pr">$</span><h2>echo $NEXT</h2></div>
   <div class="card reveal">
     <h3>Want the detail behind any of these?</h3>
-    <p>Most of them have a write-up in the <a href="blog.html">blog</a> covering what broke,
-       what the fix was, and what I'd do differently. Or just
-       <a href="contact.html">send a message</a>.</p>
+    <p>Several have a write-up in the <a href="blog.html">blog</a> covering the design, what broke,
+       and what I'd do differently. Or just <a href="contact.html">send a message</a>.</p>
   </div>
 
 </main>
@@ -132,13 +132,13 @@
 <footer>
   <div class="wrap fl">
     <span>© <span data-year></span> Byresh · SDET</span>
-    <span>built with plain HTML — green means ship it · <a href="mailto:byresh.sdet@example.com">byresh.sdet@example.com</a></span>
+    <span>built with plain HTML — green means ship it · <a href="mailto:byresh.151993@gmail.com">byresh.151993@gmail.com</a></span>
   </div>
 </footer>
 
 <button class="to-top" id="to-top" type="button" aria-label="Back to top">↑</button>
 
-<script src="assets/js/main.js"></script>
+<script src="assets/js/main.js?v=adcb442e"></script>
 
 </body>
 </html>

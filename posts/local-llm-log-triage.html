@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="High-volume security logs, parsed and pattern-matched locally to point at the failing component — cutting the manual step that sat in front of every RCA." />
+<title>Local LLMs for Security Log Triage — Byresh Thimmeshappa</title>
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="apple-touch-icon" href="../assets/img/favicon.png" />
+<meta property="og:title" content="Local LLMs for Security Log Triage — Byresh Thimmeshappa" />
+<meta property="og:description" content="High-volume security logs, parsed and pattern-matched locally to point at the failing component — cutting the manual step that sat in front of every RCA." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://byresh-sdet.github.io/assets/img/byresh-400.jpg" />
+<meta name="twitter:card" content="summary" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/style.css?v=aebde1f2" />
+<script>
+  // set theme before first paint so there is no light/dark flash
+  try {
+    document.documentElement.setAttribute(
+      'data-theme', localStorage.getItem('gs-theme') || 'dark');
+  } catch (e) { }
+</script>
+</head>
+<body data-page="blog">
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html"><span class="p">~$</span> green-suite</a>
+    <div class="nav-right">
+      <nav class="nav-links" id="nav-links">
+      <a href="../index.html">home</a>
+      <a href="../about.html">about</a>
+      <a href="../skills.html">skills</a>
+      <a href="../projects.html">projects</a>
+      <a href="../blog.html">blog</a>
+      <a href="../contact.html">contact</a>
+      </nav>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to light mode">☀</button>
+      <button class="icon-btn nav-toggle" id="nav-toggle" type="button"
+              aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">≡</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <article class="article">
+    <header class="article-head reveal in">
+      <div class="meta" style="display:flex;gap:10px;align-items:center;font-size:11.5px;color:var(--muted);flex-wrap:wrap">
+        <span class="cat">Agentic AI</span><span>2026-07-10</span>
+        <span class="dim">·</span><span>9 min read</span>
+      </div>
+      <h1>Local LLMs for Security Log Triage</h1>
+      <p style="color:var(--muted);font-size:14px;margin:0">High-volume security logs, parsed and pattern-matched locally to point at the failing component — cutting the manual step that sat in front of every RCA.</p>
+      <div class="tags" style="margin-top:12px"><span class="tag">local-llm</span><span class="tag">logs</span><span class="tag">rca</span></div>
+    </header>
+
+    <div class="article-body reveal in">
+<h2>The step before the real work</h2>
+<p>Root-cause analysis on a security platform starts with a boring, expensive step: reading logs.
+Not analysing them — just finding the part worth analysing. Across a large release with many
+components, that search dominated the time to diagnosis.</p>
+<p>It's also exactly the kind of problem language models are good at: lots of semi-structured
+text, patterns that are obvious once seen, no single regex that catches them all.</p>
+
+<h2>Why local, specifically</h2>
+<p>Security and system logs from customer-facing deployments are the last thing you want leaving
+your network. Running the model locally removed that question entirely — no data egress, no
+per-token cost on multi-gigabyte log sets, and no rate limit when someone wants to re-run the
+whole pipeline over a week of history.</p>
+<p>The tradeoff is capability, and it matters less than you'd expect. Triage is a
+narrow task: cluster related lines, spot the anomalous sequence, name the component. A smaller
+local model does that well. It doesn't need to reason about your architecture — it needs to
+point at the right hundred lines.</p>
+
+<h2>Structure beats cleverness</h2>
+<p>The biggest wins came from work that wasn't model work at all:</p>
+<ul>
+  <li><strong>Normalise first.</strong> Timestamps, hostnames, thread IDs and request IDs get
+      canonicalised before the model sees anything. Otherwise every line looks unique and no
+      pattern emerges.</li>
+  <li><strong>Chunk by transaction, not by line count.</strong> Cutting a log at an arbitrary
+      token boundary splits the cause from the symptom. Chunking on request or incident
+      boundaries keeps them together.</li>
+  <li><strong>Deterministic pre-filter.</strong> Known-benign noise is stripped with plain
+      pattern matching before the model runs. Cheaper, and it stops the model narrating things
+      everyone already knows about.</li>
+</ul>
+
+<h2>Output that a person can act on</h2>
+<p>The framework doesn't produce prose. For each run it emits the suspected component, the
+specific line range that justifies it, and the matched pattern. Every claim is anchored to
+evidence you can open.</p>
+
+<blockquote>If the tool can't show you the lines it based a conclusion on, you'll end up reading
+the logs anyway — and then you've added a step instead of removing one.</blockquote>
+
+<h2>Where it helps and where it doesn't</h2>
+<p><strong>Good at:</strong> pointing at the right component fast, spotting repeated patterns
+across releases, catching sequences a human skims past at 2am.</p>
+<p><strong>Bad at:</strong> genuinely novel failures with no precedent in the logs, and anything
+where the root cause is an <em>absence</em> — the request that never arrived, the service that
+never logged. Missing evidence is still a human's job.</p>
+
+<h2>Honest accounting</h2>
+<p>This did not replace root-cause analysis. It replaced the search that came before it. The
+engineer still does the diagnosis; they just start on the right screen instead of the first
+one.</p>
+    </div>
+
+    <nav class="article-nav">
+      <span><a href="multi-agent-test-pipeline-mcp.html">← Designing a Multi-Agent Test Pipeline with MCP</a></span>
+      <span><a href="scale-testing-7000-vms.html">Scale Testing Across 7,000 VMs and Six OS Families →</a></span>
+    </nav>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap fl">
+    <span>© <span data-year></span> Byresh · SDET</span>
+    <span>built with plain HTML — green means ship it · <a href="mailto:byresh.151993@gmail.com">byresh.151993@gmail.com</a></span>
+  </div>
+</footer>
+
+<button class="to-top" id="to-top" type="button" aria-label="Back to top">↑</button>
+
+<script src="../assets/js/main.js?v=adcb442e"></script>
+
+</body>
+</html>

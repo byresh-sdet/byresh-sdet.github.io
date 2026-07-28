@@ -2,28 +2,50 @@
 """
 green-suite static site builder.
 
-Holds the shared shell (head / nav / footer) in one place and stamps out the
-plain HTML files GitHub Pages serves. Edit the shell or the DATA below, then:
+Holds the shared shell (head / nav / footer) and all site content in one
+place, and stamps out the plain HTML files GitHub Pages serves:
 
     python3 tools/build.py
 
-Everything it writes is committed to the repo — the generator is a convenience,
-not a runtime dependency.
+Everything it writes is committed to the repo — the generator is a
+convenience, not a runtime dependency.
+
+Content policy for this site: employers and internal product names are
+deliberately kept generic (see JOURNEY / PROJECTS below). Domains are
+described, not named.
 """
 
 import os
 import re
+import json
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+
+def asset_ver(relpath):
+    """Short content hash, appended to asset URLs so browsers and GitHub Pages
+    fetch the new file instead of serving a stale cached copy."""
+    import hashlib
+    full = os.path.join(ROOT, relpath)
+    try:
+        with open(full, "rb") as fh:
+            return hashlib.md5(fh.read()).hexdigest()[:8]
+    except OSError:
+        return "0"
+
 SITE = {
     "url": "https://byresh-sdet.github.io/",
-    "name": "Byresh",
+    "name": "Byresh Thimmeshappa",
+    "short": "Byresh",
     "initial": "B",
-    "role": "Software Development Engineer in Test",
-    "email": "byresh.sdet@example.com",   # TODO: swap for your real address
+    "role": "Senior SDET / QA Strategist",
+    "email": "byresh.151993@gmail.com",
     "github": "https://github.com/byresh-sdet",
-    "linkedin": "https://www.linkedin.com/in/",  # TODO: your profile URL
+    "github_label": "byresh-sdet",
+    # LinkedIn intentionally omitted from the public site. To add it, set a
+    # URL here and re-run the build — contact.html picks it up automatically.
+    "linkedin": "",
+    "location": "Bangalore, India",
     "tagline": "green means ship it",
 }
 
@@ -38,8 +60,10 @@ NAV = [
 
 
 def shell(*, slug, title, description, body, depth=0, extra_js=""):
-    """Wrap page body in the shared document shell."""
+    """Wrap a page body in the shared document shell."""
     base = "../" * depth
+    css_v = asset_ver("assets/css/style.css")
+    js_v = asset_ver("assets/js/main.js")
     nav_links = "\n".join(
         '      <a href="{b}{href}">{label}</a>'.format(b=base, href=h, label=l)
         for h, l in NAV
@@ -61,7 +85,7 @@ def shell(*, slug, title, description, body, depth=0, extra_js=""):
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="{base}assets/css/style.css" />
+<link rel="stylesheet" href="{base}assets/css/style.css?v={css_v}" />
 <script>
   // set theme before first paint so there is no light/dark flash
   try {{
@@ -90,14 +114,14 @@ def shell(*, slug, title, description, body, depth=0, extra_js=""):
 
 <footer>
   <div class="wrap fl">
-    <span>© <span data-year></span> {SITE['name']} · SDET</span>
+    <span>© <span data-year></span> {SITE['short']} · SDET</span>
     <span>built with plain HTML — {SITE['tagline']} · <a href="mailto:{SITE['email']}">{SITE['email']}</a></span>
   </div>
 </footer>
 
 <button class="to-top" id="to-top" type="button" aria-label="Back to top">↑</button>
 
-<script src="{base}assets/js/main.js"></script>
+<script src="{base}assets/js/main.js?v={js_v}"></script>
 {extra_js}
 </body>
 </html>
@@ -112,36 +136,283 @@ SIDEBAR = f"""    <aside>
       <div class="card reveal">
         <div class="avatar"><img src="assets/img/byresh-200.jpg" width="200" height="200"
              alt="{SITE['name']}" loading="lazy" decoding="async" /></div>
-        <div class="who">{SITE['name']}</div>
+        <div class="who">{SITE['short']}</div>
         <div class="role">{SITE['role']}</div>
-        <div class="bio">8+ years building test frameworks, CI pipelines, and quality gates for web, API, and mobile. Focused on fast, deterministic suites that engineers actually trust.</div>
+        <div class="bio">11+ years owning end-to-end quality for enterprise software and security
+          platforms — test strategy, large-scale performance validation, and agentic AI workflows
+          that generate and maintain test automation.</div>
       </div>
       <div class="card reveal">
         <h4>daily stack</h4>
         <div class="stack-list">
-          <div><span>Playwright / Selenium</span><span class="ok">✓</span></div>
-          <div><span>pytest / TestNG</span><span class="ok">✓</span></div>
-          <div><span>Python / TypeScript / Java</span><span class="ok">✓</span></div>
-          <div><span>GitHub Actions / Jenkins</span><span class="ok">✓</span></div>
-          <div><span>k6 / JMeter</span><span class="ok">✓</span></div>
-          <div><span>Docker / Allure</span><span class="ok">✓</span></div>
+          <div><span>Python / Bash</span><span class="ok">✓</span></div>
+          <div><span>pytest / Robot Framework</span><span class="ok">✓</span></div>
+          <div><span>Playwright (Python) / Selenium</span><span class="ok">✓</span></div>
+          <div><span>JMeter / Locust</span><span class="ok">✓</span></div>
+          <div><span>AWS / Docker / Kubernetes</span><span class="ok">✓</span></div>
+          <div><span>Datadog / Grafana</span><span class="ok">✓</span></div>
         </div>
       </div>
       <div class="card reveal">
         <h4>topics</h4>
         <div class="topics">
-          <span>playwright</span><span>selenium</span><span>pytest</span><span>api</span><span>ci-cd</span><span>flaky-tests</span><span>k6</span><span>appium</span><span>pact</span><span>docker</span><span>allure</span>
+          <span>agentic-ai</span><span>mcp</span><span>local-llm</span><span>pytest</span><span>scale-testing</span><span>performance</span><span>jmeter</span><span>datadog</span><span>chatops</span><span>robot-framework</span><span>release-quality</span>
         </div>
       </div>
     </aside>"""
 
 STATS = """  <section class="stats reveal">
-    <div class="stat"><div class="n"><span data-count="8" data-suffix="+">8+</span></div><div class="l">years in test automation</div></div>
-    <div class="stat"><div class="n"><span data-count="2400" data-suffix="+">2,400+</span></div><div class="l">automated test cases</div></div>
-    <div class="stat"><div class="n"><span data-count="92" data-suffix="%">92%</span></div><div class="l">critical-path coverage</div></div>
-    <div class="stat"><div class="n">6&nbsp;min</div><div class="l">full suite, down from 40</div></div>
-    <div class="stat"><div class="n">0</div><div class="l">flaky tests in CI</div></div>
+    <div class="stat"><div class="n"><span data-count="11" data-suffix="+">11+</span></div><div class="l">years in quality engineering</div></div>
+    <div class="stat"><div class="n"><span data-count="7000" data-suffix="">7,000</span></div><div class="l">VMs at peak scale test</div></div>
+    <div class="stat"><div class="n"><span data-count="10" data-suffix="M">10M</span></div><div class="l">incidents in stress runs</div></div>
+    <div class="stat"><div class="n">6</div><div class="l">OS families covered</div></div>
+    <div class="stat"><div class="n"><span data-count="100" data-suffix="+">100+</span></div><div class="l">ChatOps utilities shipped</div></div>
   </section>"""
+
+
+# ============================================================
+# career journey — employers kept generic by choice
+# ============================================================
+
+JOURNEY = [
+    {
+        "year": "2015", "short": "Senior QA Engr", "role": "Senior Engineer — QA",
+        "company": "Automotive IoT & wearable platforms", "period": "Jan 2015 — Aug 2018",
+        "points": [
+            "Validated API services for an automotive IoT platform using Swagger-driven test design and JMeter",
+            "Tested a cloud wearable platform end to end, including device provisioning over Android ADB",
+            "Verified cloud connectivity across both iOS and Android device estates",
+            "Authored and maintained manual and automated suites covering platform reliability and performance",
+        ],
+        "tech": ["Python", "Appium", "JMeter", "Swagger", "Android ADB"],
+    },
+    {
+        "year": "2018", "short": "Lead Engr", "role": "Lead Engineer — Testing",
+        "company": "Connected-vehicle IoT platform", "period": "Sep 2018 — Nov 2021",
+        "points": [
+            "Led end-to-end quality for a connected-vehicle platform built on real-time stream processing",
+            "Built one unified Python + Robot Framework suite covering API, web and mobile in a single CI pipeline",
+            "Validated MQTT data flows for trip generation and on-board-diagnostics incident triggering",
+            "Performed Kubernetes and Helm deployment validation on cloud infrastructure",
+        ],
+        "tech": ["Python", "Robot Framework", "Selenium", "Appium", "Kafka", "MQTT", "Jenkins", "Kubernetes"],
+    },
+    {
+        "year": "2021", "short": "Senior SDET", "role": "Senior SDET / QA Strategist",
+        "company": "Enterprise endpoint security platform", "period": "Nov 2021 — Present",
+        "points": [
+            "Own end-to-end QA strategy from requirement review through production sign-off, acting as final release approver",
+            "Designed scale testing across 3,000–7,000 VMs spanning six OS families, on cloud and on-premise environments",
+            "Ran stress tests at 5–10M security incidents to find breaking points; results set production sizing guidance",
+            "Built a multi-agent, MCP-orchestrated pipeline that turns tickets and OpenAPI specs into reviewed test automation",
+            "Built a local-LLM log-analysis framework that pinpoints failures in high-volume security logs",
+            "Shipped 100+ Python Slack ChatOps utilities adopted by support teams across live deployments",
+        ],
+        "tech": ["Python", "MCP", "Claude API", "n8n", "pytest", "JMeter", "Locust", "AWS", "Datadog", "TestRail"],
+    },
+]
+
+
+def journey_html():
+    nodes = []
+    for i, j in enumerate(JOURNEY):
+        cls = "journey-node" + (" active done" if i == len(JOURNEY) - 1 else "")
+        nodes.append(f"""        <button class="{cls}" data-idx="{i}" type="button">
+          <span class="journey-node-dot"><span class="journey-node-dot-inner"></span></span>
+          <span class="journey-node-year">{j['year']}</span>
+          <span class="journey-node-role">{j['short']}</span>
+        </button>""")
+    return "\n".join(nodes)
+
+
+JOURNEY_JS = "<script>window.GS_JOURNEY = " + json.dumps(JOURNEY) + ";</script>" + """
+<script>
+(function () {
+  var data = window.GS_JOURNEY || [];
+  var track = document.getElementById('journey-track');
+  if (!track) return;
+  var fill = document.getElementById('journey-fill');
+  var detail = document.getElementById('journey-detail');
+  var prev = document.getElementById('j-prev');
+  var next = document.getElementById('j-next');
+  var counter = document.getElementById('j-counter');
+  var nodes = Array.prototype.slice.call(track.querySelectorAll('.journey-node'));
+  var idx = data.length - 1;
+
+  function render() {
+    var j = data[idx];
+    nodes.forEach(function (n, i) {
+      n.classList.toggle('active', i === idx);
+      n.classList.toggle('done', i <= idx);
+    });
+    if (fill) {
+      fill.style.width = (data.length < 2 ? 100 : (idx / (data.length - 1)) * 100) + '%';
+    }
+    detail.innerHTML =
+      '<div class="journey-detail-top">' +
+        '<div>' +
+          '<h3 class="journey-detail-role">' + j.role + '</h3>' +
+          '<div class="journey-detail-company">' + j.company + '</div>' +
+        '</div>' +
+        '<div class="journey-detail-period">' + j.period + '</div>' +
+      '</div>' +
+      '<ul class="journey-detail-points">' +
+        j.points.map(function (p) { return '<li>' + p + '</li>'; }).join('') +
+      '</ul>' +
+      '<div class="journey-detail-tech">' +
+        j.tech.map(function (t) { return '<span>' + t + '</span>'; }).join('') +
+      '</div>';
+    counter.textContent = (idx + 1) + ' / ' + data.length;
+    prev.disabled = idx === 0;
+    next.disabled = idx === data.length - 1;
+  }
+
+  track.addEventListener('click', function (ev) {
+    var b = ev.target.closest('.journey-node');
+    if (!b) return;
+    idx = parseInt(b.dataset.idx, 10);
+    render();
+  });
+  prev.addEventListener('click', function () { if (idx > 0) { idx--; render(); } });
+  next.addEventListener('click', function () { if (idx < data.length - 1) { idx++; render(); } });
+  render();
+})();
+</script>"""
+
+
+# ============================================================
+# skills
+# ============================================================
+
+# Each group: (key, icon, label, level 0-100 for the sidebar bar, [skill names])
+# The level drives only the thin category bar in the sidebar — no numbers are shown.
+SKILL_GROUPS = [
+    ("ai", "\U0001F916", "AI & Agentic QA", 92, [
+        "Multi-agent design", "MCP orchestration", "Claude API", "Prompt design",
+        "Local-LLM analysis", "Human-in-the-loop gates", "Self-healing policy",
+        "OpenAPI-driven generation", "n8n", "ChatOps",
+    ]),
+    ("automation", "\u2328", "Languages & Automation", 90, [
+        "Python", "pytest", "Robot Framework", "Bash", "Playwright (Python)",
+        "Selenium", "Appium", "Postman", "JSON schema validation", "YAML",
+    ]),
+    ("scale", "\U0001F4C8", "Performance & Scale", 88, [
+        "Scale test design", "JMeter", "Locust", "Capacity analysis",
+        "Bottleneck analysis", "Rate-limit validation", "Concurrency testing",
+        "3K\u20137K VM fleets", "5\u201310M incident stress",
+    ]),
+    ("infra", "\u2601", "Cloud & CI/CD", 84, [
+        "AWS EC2", "AWS EKS", "S3", "MSK", "DocumentDB", "Redis",
+        "Docker", "Kubernetes", "Helm", "Jenkins", "GitHub Actions",
+    ]),
+    ("practice", "\U0001F9ED", "Quality Practice", 94, [
+        "Test strategy", "Risk-based planning", "Quality gates", "Release readiness",
+        "Defect lifecycle & RCA", "Quality metrics", "TestRail", "JIRA",
+        "Datadog", "Grafana", "Shift-left reviews",
+    ]),
+]
+
+
+def skills_html():
+    """Sidebar tabs + mobile icon tabs + one panel per category."""
+    tabs, mobile, panels = [], [], []
+    for i, (key, icon, label, level, items) in enumerate(SKILL_GROUPS):
+        active = " active" if i == 0 else ""
+        sel = "true" if i == 0 else "false"
+
+        tabs.append(f"""        <button class="skills-sidebar-tab cat-{key}{active}" type="button"
+                role="tab" aria-selected="{sel}" data-panel="{key}">
+          <span class="skills-sidebar-icon">{icon}</span>
+          <span class="skills-sidebar-info">
+            <span class="skills-sidebar-title">{label}</span>
+            <span class="skills-sidebar-bar-track">
+              <span class="skills-sidebar-bar-fill" data-pct="{level}"></span>
+            </span>
+          </span>
+          <span class="skills-sidebar-badge">{len(items)}</span>
+        </button>""")
+
+        mobile.append(
+            f'        <button class="skills-tab-mobile cat-{key}{active}" type="button"'
+            f' aria-label="{label}" data-panel="{key}">{icon}</button>'
+        )
+
+        tiles = "\n".join(
+            f"""            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">{t}</span>
+            </div>""" for t in items
+        )
+        panels.append(f"""      <section class="skills-panel cat-{key}{active}" id="panel-{key}" role="tabpanel">
+        <div class="skills-panel-header">
+          <div class="skills-panel-icon">{icon}</div>
+          <div>
+            <h3 class="skills-panel-title">{label}</h3>
+            <p class="skills-panel-count">{len(items)} skills</p>
+          </div>
+        </div>
+        <div class="skills-panel-items">
+{tiles}
+        </div>
+      </section>""")
+
+    return "\n".join(tabs), "\n".join(mobile), "\n".join(panels)
+
+
+# ============================================================
+# projects
+# ============================================================
+
+PROJECTS = [
+    ("g-green", "🤖", "Multi-Agent Test Pipeline (MCP)", "Agentic AI · Python",
+     "Requirements-extraction, generation, reviewer and automation agents that ingest tickets and OpenAPI specs "
+     "and produce reviewed, runnable API test automation — with a human approval gate at every stage before merge.",
+     [("4", "agent roles"), ("100%", "human-gated")],
+     ["MCP", "Claude API", "n8n", "Python", "OpenAPI"]),
+    ("g-violet", "🔍", "Local-LLM Log Analysis", "Applied LLM · Triage",
+     "Parses high-volume security and system logs and pinpoints the failing component through automated pattern "
+     "matching, cutting the manual triage step that used to sit in front of every root-cause analysis.",
+     [("local", "no data egress"), ("↓", "triage time")],
+     ["Local LLM", "Python", "Pattern detection"]),
+    ("g-blue", "🖧", "Scale Test Framework", "Performance · 7K VMs",
+     "Full lifecycle scale testing across 3,000–7,000 VMs and six OS families on cloud and on-premise: provisioning, "
+     "agent install, connectivity validation and behaviour verification under sustained load.",
+     [("7,000", "VMs"), ("6", "OS families")],
+     ["Python", "AWS EC2", "Bash", "Custom harness"]),
+    ("g-warm", "💥", "Incident Stress Harness", "Performance · Capacity",
+     "Stress runs at 5–10 million security incidents to locate system breaking points. Findings fed directly into "
+     "production infrastructure sizing and customer deployment guidance.",
+     [("10M", "incidents"), ("→", "sizing guidance")],
+     ["Locust", "JMeter", "Datadog", "DocumentDB"]),
+    ("g-pink", "💬", "Slack ChatOps Toolkit", "Developer experience",
+     "100+ Python utilities for test execution, incident tracking and log collection, driven from Slack and adopted "
+     "by support teams across every live deployment.",
+     [("100+", "utilities"), ("all", "deployments")],
+     ["Python", "Slack API", "ChatOps"]),
+    ("g-lilac", "🔗", "Unified Automation Suite", "Framework · IoT",
+     "One Python and Robot Framework suite covering API, web and mobile in a single CI pipeline with real-device "
+     "testing — replacing three separate per-surface frameworks.",
+     [("3→1", "frameworks"), ("1", "CI pipeline")],
+     ["Robot Framework", "Python", "Selenium", "Appium", "Jenkins"]),
+]
+
+
+def projects_html():
+    out = []
+    for grad, icon, title, domain, desc, metrics, tech in PROJECTS:
+        m = "".join(f"<div><b>{v}</b>{k}</div>" for v, k in metrics)
+        t = "".join(f"<span>{x}</span>" for x in tech)
+        out.append(f"""    <article class="proj reveal">
+      <div class="proj-banner" style="background: var(--{grad})">{icon}</div>
+      <div class="proj-body">
+        <h3>{title}</h3>
+        <div class="proj-domain">{domain}</div>
+        <p>{desc}</p>
+        <div class="proj-metrics">{m}</div>
+        <div class="journey-detail-tech">{t}</div>
+      </div>
+    </article>""")
+    return "\n".join(out)
 
 
 # ============================================================
@@ -150,464 +421,371 @@ STATS = """  <section class="stats reveal">
 
 POSTS = [
     {
-        "slug": "killing-flaky-tests-playwright",
-        "cat": "playwright", "cat_label": "Playwright",
-        "date": "2026-07-15", "read": "11 min",
-        "title": "Killing Flaky Tests: Auto-Retry vs. Root-Cause",
-        "excerpt": "Retries hide flake; they don't fix it. A framework for triaging the three real causes — timing, test-data bleed, and shared state — with Playwright traces as evidence.",
-        "tags": ["flaky", "playwright", "traces"],
+        "slug": "multi-agent-test-pipeline-mcp",
+        "cat": "ai", "cat_label": "Agentic AI",
+        "date": "2026-07-18", "read": "12 min",
+        "title": "Designing a Multi-Agent Test Pipeline with MCP",
+        "excerpt": "Four agent roles — extraction, generation, review, automation — turning tickets and OpenAPI specs into runnable API tests, with a human gate at every stage.",
+        "tags": ["mcp", "agents", "llm"],
         "body": """
-<h2>Retries are a painkiller, not a cure</h2>
-<p>Every suite reaches the point where someone adds <code>retries: 2</code> to the config and the
-build goes green. It feels like a fix. It isn't. A retried test is a test that told you
-something and got ignored — you've traded a signal for a slightly longer pipeline.</p>
-<p>The rule I hold teams to: retries are allowed, but every retry must be <em>recorded</em>. If a
-test passes on attempt two, it still shows up on the flake report. Otherwise the debt is
-invisible and it compounds.</p>
+<h2>Why more than one agent</h2>
+<p>The obvious version of "AI writes my tests" is one prompt: hand a model a ticket, ask for a
+test, paste the result. It works for demos and falls apart on real specs, because a single
+prompt is doing four unrelated jobs at once — reading requirements, designing cases, judging
+whether those cases are any good, and producing runnable code.</p>
+<p>Splitting those into separate roles helped for a reason that has little to do with model
+capability: <strong>each role gets its own success criterion, and each boundary is a place a
+human can stand.</strong></p>
 
-<pre><code>// playwright.config.ts
-export default defineConfig({
-  retries: process.env.CI ? 2 : 0,
-  reporter: [
-    ['list'],
-    ['json', { outputFile: 'flake-report.json' }],
-  ],
-  use: {
-    trace: 'retain-on-failure',
-    screenshot: 'only-on-failure',
-  },
-});</code></pre>
-
-<h2>The three real causes</h2>
-
-<h3>1. Timing — waiting on the wrong thing</h3>
-<p>The most common flake by a wide margin. The test waits for a spinner to disappear when the
-thing it actually cares about is a network response settling and a re-render landing.
-<code>waitForTimeout</code> is the tell: it's a guess dressed as a wait.</p>
-<p>Fix it by asserting on the state you care about, and let the framework poll:</p>
-<pre><code>// brittle
-await page.waitForTimeout(2000);
-expect(await page.locator('.row').count()).toBe(25);
-
-// deterministic
-await expect(page.locator('.row')).toHaveCount(25, { timeout: 10_000 });</code></pre>
-
-<h3>2. Test-data bleed</h3>
-<p>Two tests reach for the same seeded user, run in parallel, and fight over its state. This one
-is sneaky because it only appears under load — exactly when you shard the suite to make it
-faster. Every test should mint the data it needs and tear it down, or claim from a pool with
-a lease.</p>
-
-<h3>3. Shared state that survives the test</h3>
-<p>Local storage, cookies, feature flags, a stubbed clock. Playwright's isolated contexts remove
-most of this for free; the leaks that remain are almost always on the server side.</p>
-
-<h2>Traces are the evidence</h2>
-<p>Guessing at flake is how you spend a week and fix nothing. With
-<code>trace: 'retain-on-failure'</code>, every failed attempt leaves a full timeline — DOM snapshots,
-network, console — and you open it with:</p>
-<pre><code>npx playwright show-trace test-results/&lt;test&gt;/trace.zip</code></pre>
-<p>Scrub to the failing assertion and look at the frame <em>before</em> it. Nine times out of ten
-the answer is right there: a request still in flight, or a row rendered with stale data.</p>
-
-<blockquote>A flaky test is a test that has found a real race condition and is being ignored.
-Sometimes the race is in the test. Often it isn't.</blockquote>
-
-<h2>The triage loop that worked</h2>
+<h3>The four roles</h3>
 <ol>
-  <li>Quarantine the test — tag it, keep it running, stop it blocking the merge queue.</li>
-  <li>Pull the last ten traces. Failing at the same step? Timing. Different steps? State.</li>
-  <li>Fix the cause, then remove the quarantine tag in the same PR.</li>
-  <li>Anything quarantined for more than two weeks gets deleted. An ignored test is worse than no test.</li>
+  <li><strong>Requirements extraction</strong> — reads the ticket and the OpenAPI spec, emits a
+      structured list of testable behaviours. No test cases yet, just claims about what the
+      system should do.</li>
+  <li><strong>Test generation</strong> — turns each behaviour into concrete cases: inputs,
+      expected status, expected schema, edge conditions.</li>
+  <li><strong>Reviewer</strong> — judges the generated cases against the original spec. Looks for
+      invented endpoints, assertions that can't fail, and missing negative paths.</li>
+  <li><strong>Automation</strong> — writes the actual runnable test code and wires it into CI.</li>
 </ol>
-<p>Six weeks of that took our flake rate from about 4% of runs to zero, and the merge queue
-stopped being something people worked around.</p>
-""",
-    },
-    {
-        "slug": "sharding-pytest-suite-ci",
-        "cat": "cicd", "cat_label": "CI/CD",
-        "date": "2026-07-11", "read": "9 min",
-        "title": "From 40 min to 6 min: Sharding a pytest Suite Across Runners",
-        "excerpt": "Splitting 2,400 tests across parallel GitHub Actions runners with pytest-xdist and load-balanced sharding — plus how to keep flaky-order failures from creeping back in.",
-        "tags": ["pytest", "github-actions", "xdist"],
-        "body": """
-<h2>Where the 40 minutes went</h2>
-<p>2,400 tests on a single runner, mostly waiting: browser startup, network round-trips, fixture
-setup repeated for tests that could have shared it. CPU sat near idle the whole time. That's
-the shape of a suite that wants to be parallel.</p>
 
-<h2>Step one: parallel within the runner</h2>
-<p><code>pytest-xdist</code> gets you most of the first win with one flag:</p>
-<pre><code>pytest -n auto --dist loadgroup</code></pre>
-<p><code>loadgroup</code> matters. Plain <code>load</code> scatters tests across workers with no regard for
-grouping, which shreds any module-scoped fixture you have. With <code>loadgroup</code> plus
-<code>@pytest.mark.xdist_group</code>, tests that share expensive setup land on the same worker.</p>
+<h2>The gate matters more than the agents</h2>
+<p>Every stage boundary is a human approval point. Nothing merges because a model said it was
+fine. This is the part I'd keep even if the models got twice as good, because the failure mode
+of generated tests is not "obviously broken" — it's <em>plausible and wrong</em>. A test that
+asserts a 200 and nothing else passes forever and tells you nothing.</p>
 
-<h2>Step two: shard across runners</h2>
-<p>One machine only goes so far. GitHub Actions matrices give you N machines cheaply:</p>
-<pre><code>jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2, 3, 4, 5, 6]
-    steps:
-      - uses: actions/checkout@v4
-      - run: pip install -r requirements-test.txt
-      - run: |
-          pytest -n 4 --dist loadgroup \\
-                 --splits 6 --group ${{ matrix.shard }} \\
-                 --junitxml=results-${{ matrix.shard }}.xml
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: results-${{ matrix.shard }}
-          path: results-${{ matrix.shard }}.xml</code></pre>
+<blockquote>An unreviewed generated test is worse than no test: it occupies the slot where a
+real test would have gone, and it reports green.</blockquote>
 
-<h3>Split by duration, not by count</h3>
-<p>Six equal-sized groups are not six equal-duration groups. <code>pytest-split</code> reads a stored
-timing file and balances by measured runtime, which took our slowest shard from 11 minutes to
-just under 6:</p>
-<pre><code>pytest --store-durations   # once, on a full run
-# commit .test_durations, then --splits/--group balances properly</code></pre>
-
-<h2>What sharding breaks</h2>
-<p>Parallelism turns every latent ordering assumption into a real failure. That's not a
-regression — it's the suite finally telling the truth. Two things caused nearly all of it:</p>
+<h2>Self-healing, with a hard limit</h2>
+<p>The automation agent is allowed to repair its own tests, but only within a narrow band. The
+policy that took the longest to get right:</p>
 <ul>
-  <li><strong>Shared fixtures with module scope</strong> that were quietly doing global setup.
-      Anything touching a shared resource got promoted to a session-scoped fixture behind a lock,
-      or made per-test.</li>
-  <li><strong>Seeded test accounts.</strong> Two shards logging in as the same user, one logging
-      the other out. Replaced with a factory that mints a user per test and cleans up in teardown.</li>
+  <li><strong>Auto-heal</strong> locator drift and environment drift — a renamed selector, a
+      moved base URL, a changed test-data fixture. Mechanical breakage with no behavioural
+      meaning.</li>
+  <li><strong>Fail loudly</strong> when the behaviour or the contract has changed. A field that
+      disappeared, a status code that moved, an enum that narrowed. These get escalated to the
+      reviewer agent, never patched.</li>
+  <li><strong>Log every heal</strong> for audit. If the system quietly fixed something, that
+      shows up in a report a person reads.</li>
 </ul>
-<p>To catch the rest before they hit main, run <code>pytest-randomly</code> nightly. If the suite only
-passes in declaration order, it doesn't really pass.</p>
+<p>Without the third rule you build a machine that mends its own tests until they assert nothing.
+That's the whole risk of self-healing in one sentence, and it's why the audit log isn't
+optional.</p>
 
-<h2>Merging results</h2>
-<p>Six JUnit files aren't a report. A final job downloads all artifacts, merges them, and
-publishes one summary — so a developer sees one number, not six jobs to click through.</p>
-<pre><code>junitparser merge results-*.xml merged.xml</code></pre>
+<h2>Orchestration</h2>
+<p>The prototype wires the stages with n8n and the Claude API, with tool integrations for the
+issue tracker, the source host and Slack. End to end it runs: ticket intake → extracted
+behaviours → generated cases → review → automation → CI execution → summary posted back to
+Slack.</p>
+<p>Using a workflow tool rather than bespoke glue was the right call early. Most of the iteration
+was on <em>where the humans stand</em> and what each agent is told, not on plumbing — and moving
+a gate is a drag-and-drop instead of a refactor.</p>
 
-<h2>The result</h2>
+<h2>What I'd tell someone starting</h2>
 <ul>
-  <li>40 min → 6 min wall clock</li>
-  <li>Six shards × four xdist workers = 24-way parallelism</li>
-  <li>Compute cost roughly flat — same total work, less idle waiting</li>
-  <li>Three genuine ordering bugs found and fixed on the way</li>
+  <li>Write the system instruction for each role separately. Shared prompts blur the roles back
+      together and you lose the thing you split them up for.</li>
+  <li>Make the reviewer adversarial. A reviewer that agrees with the generator is decoration.</li>
+  <li>Decide the escalation policy before you enable any self-healing.</li>
+  <li>Measure whether generated tests ever <em>catch</em> anything. Coverage that never fails is
+      not coverage.</li>
 </ul>
 """,
     },
     {
-        "slug": "contract-testing-pact",
-        "cat": "api", "cat_label": "API",
-        "date": "2026-07-04", "read": "8 min",
-        "title": "Contract Testing REST APIs with Pact — What Broke and Why",
-        "excerpt": "Consumer-driven contracts caught three breaking changes before they shipped. A walkthrough of provider verification, the pact broker, and the CI gate that enforces it.",
-        "tags": ["pact", "rest", "contracts"],
+        "slug": "local-llm-log-triage",
+        "cat": "ai", "cat_label": "Agentic AI",
+        "date": "2026-07-10", "read": "9 min",
+        "title": "Local LLMs for Security Log Triage",
+        "excerpt": "High-volume security logs, parsed and pattern-matched locally to point at the failing component — cutting the manual step that sat in front of every RCA.",
+        "tags": ["local-llm", "logs", "rca"],
         "body": """
-<h2>The gap contract tests fill</h2>
-<p>Unit tests prove a service is internally consistent. End-to-end tests prove the whole system
-works, slowly and flakily. The interesting failures live in between: the provider renamed a
-field, its own tests still pass, and the consumer finds out in staging on a Friday.</p>
-<p>Consumer-driven contracts close that gap without standing up the full stack.</p>
+<h2>The step before the real work</h2>
+<p>Root-cause analysis on a security platform starts with a boring, expensive step: reading logs.
+Not analysing them — just finding the part worth analysing. Across a large release with many
+components, that search dominated the time to diagnosis.</p>
+<p>It's also exactly the kind of problem language models are good at: lots of semi-structured
+text, patterns that are obvious once seen, no single regex that catches them all.</p>
 
-<h2>The consumer writes the expectation</h2>
-<pre><code>await provider.addInteraction({
-  state: 'an account with id 42 exists',
-  uponReceiving: 'a request for account 42',
-  withRequest: { method: 'GET', path: '/accounts/42' },
-  willRespondWith: {
-    status: 200,
-    body: {
-      id: like(42),
-      displayName: like('Ada Lovelace'),
-      status: term({ generate: 'active', matcher: 'active|suspended' }),
+<h2>Why local, specifically</h2>
+<p>Security and system logs from customer-facing deployments are the last thing you want leaving
+your network. Running the model locally removed that question entirely — no data egress, no
+per-token cost on multi-gigabyte log sets, and no rate limit when someone wants to re-run the
+whole pipeline over a week of history.</p>
+<p>The tradeoff is capability, and it matters less than you'd expect. Triage is a
+narrow task: cluster related lines, spot the anomalous sequence, name the component. A smaller
+local model does that well. It doesn't need to reason about your architecture — it needs to
+point at the right hundred lines.</p>
+
+<h2>Structure beats cleverness</h2>
+<p>The biggest wins came from work that wasn't model work at all:</p>
+<ul>
+  <li><strong>Normalise first.</strong> Timestamps, hostnames, thread IDs and request IDs get
+      canonicalised before the model sees anything. Otherwise every line looks unique and no
+      pattern emerges.</li>
+  <li><strong>Chunk by transaction, not by line count.</strong> Cutting a log at an arbitrary
+      token boundary splits the cause from the symptom. Chunking on request or incident
+      boundaries keeps them together.</li>
+  <li><strong>Deterministic pre-filter.</strong> Known-benign noise is stripped with plain
+      pattern matching before the model runs. Cheaper, and it stops the model narrating things
+      everyone already knows about.</li>
+</ul>
+
+<h2>Output that a person can act on</h2>
+<p>The framework doesn't produce prose. For each run it emits the suspected component, the
+specific line range that justifies it, and the matched pattern. Every claim is anchored to
+evidence you can open.</p>
+
+<blockquote>If the tool can't show you the lines it based a conclusion on, you'll end up reading
+the logs anyway — and then you've added a step instead of removing one.</blockquote>
+
+<h2>Where it helps and where it doesn't</h2>
+<p><strong>Good at:</strong> pointing at the right component fast, spotting repeated patterns
+across releases, catching sequences a human skims past at 2am.</p>
+<p><strong>Bad at:</strong> genuinely novel failures with no precedent in the logs, and anything
+where the root cause is an <em>absence</em> — the request that never arrived, the service that
+never logged. Missing evidence is still a human's job.</p>
+
+<h2>Honest accounting</h2>
+<p>This did not replace root-cause analysis. It replaced the search that came before it. The
+engineer still does the diagnosis; they just start on the right screen instead of the first
+one.</p>
+""",
     },
-  },
-});</code></pre>
-<p>Note what's <em>not</em> asserted. <code>like()</code> checks the type, not the value. A contract that
-pins exact values is a contract that fails on every data change and teaches people to ignore it.
-Assert on the shape you actually depend on, and nothing more.</p>
+    {
+        "slug": "scale-testing-7000-vms",
+        "cat": "scale", "cat_label": "Scale",
+        "date": "2026-06-30", "read": "13 min",
+        "title": "Scale Testing Across 7,000 VMs and Six OS Families",
+        "excerpt": "Provisioning, agent install, connectivity validation and behaviour verification — the full lifecycle of a scale test large enough that the harness becomes the hard part.",
+        "tags": ["scale", "aws", "performance"],
+        "body": """
+<h2>At this size, the test harness is the system under test</h2>
+<p>A hundred VMs is a big test. Seven thousand is a distributed system of its own, and most of
+the engineering goes into the harness rather than the assertions. At that scale things fail
+that simply don't at small scale: provisioning APIs throttle, a fraction of a percent of
+installs hang forever, and "did every agent actually connect?" stops being answerable by
+looking.</p>
 
-<h2>The provider proves it can satisfy it</h2>
-<p>Running the consumer tests produces a pact file, published to a broker. The provider's own
-pipeline then replays every interaction against a real instance:</p>
-<pre><code>await new Verifier({
-  provider: 'accounts-api',
-  providerBaseUrl: 'http://localhost:8080',
-  pactBrokerUrl: process.env.PACT_BROKER_URL,
-  publishVerificationResult: process.env.CI === 'true',
-  providerVersion: process.env.GIT_SHA,
-  stateHandlers: {
-    'an account with id 42 exists': () => seedAccount({ id: 42 }),
-  },
-}).verifyProvider();</code></pre>
-<p><code>stateHandlers</code> is where this lives or dies. Each provider state needs to set up exactly the
-data the interaction assumes — no more. If your state handler seeds half the database, you've
-rebuilt an integration test with extra steps.</p>
-
-<h2>What it actually caught</h2>
+<h2>The lifecycle, in order</h2>
 <ol>
-  <li><strong>A renamed field.</strong> <code>display_name</code> → <code>displayName</code>, shipped as a
-      "cosmetic" change. Two consumers were reading the old key.</li>
-  <li><strong>A narrowed enum.</strong> A status value was dropped as unused. It wasn't — one
-      consumer branched on it.</li>
-  <li><strong>A nullable turned non-null.</strong> The provider started omitting a field when
-      empty rather than sending <code>null</code>, and a consumer's parser threw.</li>
+  <li><strong>Provisioning</strong> — spin up fleets across cloud and on-premise virtualisation,
+      spanning six OS families from legacy Windows Server through current RHEL and Ubuntu.</li>
+  <li><strong>Agent installation</strong> — deploy the product agent onto every host. This is
+      where OS diversity hurts most; a working installer on one family proves nothing about the
+      next.</li>
+  <li><strong>Connectivity validation</strong> — confirm every agent registered with the
+      management service. Not most. Every one, counted.</li>
+  <li><strong>Behaviour verification</strong> — only now does the actual test run, under
+      sustained load across a heterogeneous fleet.</li>
 </ol>
-<p>All three would have passed every test the provider team had. None reached staging.</p>
+<p>Steps one to three are the unglamorous majority of the work. Skipping the counting in step
+three is how you get a "successful" scale run that quietly tested 5,800 VMs.</p>
 
-<h2>The CI gate</h2>
-<p>The piece that makes it real: nothing deploys unless the broker says the contracts hold for
-that exact version against that environment.</p>
-<pre><code>pact-broker can-i-deploy \\
-  --pacticipant accounts-api \\
-  --version "$GIT_SHA" \\
-  --to-environment production</code></pre>
-<p>Non-zero exit, no deploy. Without this step you don't have contract testing — you have a
-dashboard.</p>
+<h3>Count what registered, don't assume it</h3>
+<p>The single most valuable piece of the harness is a reconciliation step: what was provisioned,
+versus what installed, versus what registered. Three numbers that should match and frequently
+don't. The gap is either a real product bug at scale or a harness bug — and both are worth
+knowing before you interpret any performance figure.</p>
 
-<blockquote>Contract tests answer one question well: can these two versions talk to each other?
-Don't ask them to check business logic.</blockquote>
+<blockquote>A scale test that can't tell you its own denominator isn't measuring anything.</blockquote>
+
+<h2>Six OS families is the multiplier</h2>
+<p>Scale and compatibility interact in ways neither shows alone. Behaviour that is fine on
+current Ubuntu can degrade badly on an old Windows Server under the same load, and you only see
+it when both are in the same run. Keeping all six families in one fleet — rather than testing
+each in isolation — is what surfaces the interesting failures.</p>
+<p>It also makes the harness messier: different install mechanisms, different log locations,
+different ways of asking "is the service up". Worth it.</p>
+
+<h2>Reading the results</h2>
+<p>Bottleneck analysis is where scale testing pays off. Watching CPU, memory, throughput and
+latency together across the fleet points at the constraint, and it's rarely where people guess.
+The recurring finding in our case was on the data layer — slow queries that were invisible at
+small scale and dominant under sustained fleet-wide load, addressed through query and replica
+configuration work.</p>
+
+<h2>The output is a number someone else uses</h2>
+<p>The point of all this isn't a green tick. It's sizing guidance: what infrastructure a
+deployment of a given size actually needs. That number goes to the people planning production
+capacity and to customers planning theirs, which is a much higher bar than "the test passed."</p>
 """,
     },
     {
-        "slug": "selenium-grid-docker-actions",
-        "cat": "selenium", "cat_label": "Selenium",
-        "date": "2026-06-28", "read": "12 min",
-        "title": "A Parallel Selenium Grid with Docker + GitHub Actions",
-        "excerpt": "Standing up an ephemeral Selenium Grid per pipeline run — hub, nodes, and a health-check gate — so cross-browser tests run clean and tear down when the job ends.",
-        "tags": ["selenium", "docker", "grid"],
+        "slug": "stress-testing-10m-incidents",
+        "cat": "scale", "cat_label": "Scale",
+        "date": "2026-06-21", "read": "10 min",
+        "title": "Stress Testing to 10 Million Incidents: Finding the Breaking Point",
+        "excerpt": "Load tests prove the system holds. Stress tests find where it stops — and that number is what production sizing should be built on.",
+        "tags": ["stress", "capacity", "datadog"],
         "body": """
-<h2>Why ephemeral beats a standing grid</h2>
-<p>A long-lived Selenium Grid slowly becomes a pet: browser versions drift from production,
-zombie sessions eat slots, and one team's stuck job blocks everyone. An ephemeral grid — created
-per pipeline run, destroyed with the job — has none of those problems, and the config lives in
-the repo where it can be reviewed.</p>
+<h2>Load testing and stress testing answer different questions</h2>
+<p>A load test asks: does the system meet its targets at expected volume? A stress test asks:
+where does it stop, and how? Both matter, but only the second one gives you a sizing model,
+because sizing is a question about headroom and headroom is measured from the ceiling down.</p>
+<p>So the goal of these runs was explicitly to break things — pushing to 5–10 million security
+incidents to find the point where behaviour changed.</p>
 
-<h2>The compose file</h2>
-<pre><code>services:
-  hub:
-    image: selenium/hub:4.27
-    ports: ["4442:4442", "4443:4443", "4444:4444"]
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
-      interval: 5s
-      timeout: 3s
-      retries: 20
-
-  chrome:
-    image: selenium/node-chromium:4.27
-    depends_on: { hub: { condition: service_healthy } }
-    shm_size: 2gb
-    environment:
-      SE_EVENT_BUS_HOST: hub
-      SE_EVENT_BUS_PUBLISH_PORT: 4442
-      SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
-      SE_NODE_MAX_SESSIONS: 4
-      SE_NODE_OVERRIDE_MAX_SESSIONS: "true"
-
-  firefox:
-    image: selenium/node-firefox:4.27
-    depends_on: { hub: { condition: service_healthy } }
-    shm_size: 2gb
-    environment:
-      SE_EVENT_BUS_HOST: hub
-      SE_EVENT_BUS_PUBLISH_PORT: 4442
-      SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
-      SE_NODE_MAX_SESSIONS: 4</code></pre>
-
-<p><code>shm_size: 2gb</code> is not optional. The default 64 MB of shared memory makes Chrome crash
-under parallel load, and the failure looks exactly like a flaky test — a tab that dies
-mid-session with no useful error.</p>
-
-<h2>Gate on readiness, not on sleep</h2>
-<p>The single biggest source of "grid flake" is starting tests before every node has registered.
-The hub reports this properly, so poll it:</p>
-<pre><code>- name: Wait for grid
-  run: |
-    for i in $(seq 1 40); do
-      ready=$(curl -sf http://localhost:4444/wd/hub/status \\
-              | jq -r '.value.ready')
-      if [ "$ready" = "true" ]; then echo "grid ready"; exit 0; fi
-      sleep 3
-    done
-    echo "grid never became ready"; docker compose logs hub; exit 1</code></pre>
-<p>Dumping the hub logs on failure turns "the pipeline is broken again" into a two-minute diagnosis.</p>
-
-<h2>Sizing the parallelism</h2>
-<p>Total sessions = nodes × <code>SE_NODE_MAX_SESSIONS</code>. Your test runner's thread count must not
-exceed that, or tests queue silently and start timing out for reasons that have nothing to do
-with the application. Two browsers × four sessions = eight; run eight threads, not sixteen.</p>
-
-<h2>Tearing down properly</h2>
-<pre><code>- name: Grid logs
-  if: failure()
-  run: docker compose logs --no-color > grid-logs.txt
-
-- name: Tear down
-  if: always()
-  run: docker compose down -v</code></pre>
-<p><code>if: always()</code> on teardown, <code>if: failure()</code> on log capture. Skip the first and self-hosted
-runners fill up with orphaned containers within a week.</p>
-
-<h2>Where it landed</h2>
+<h2>Ramp, don't leap</h2>
+<p>Jumping straight to peak tells you only pass or fail. Ramping tells you the <em>shape</em> of
+the degradation, which is the part with diagnostic value:</p>
 <ul>
-  <li>Cross-browser regression: 22 min → 7 min</li>
-  <li>Zero shared-grid contention between teams</li>
-  <li>Browser versions bumped by editing one image tag in a reviewed PR</li>
+  <li><strong>Graceful degradation</strong> — latency climbs smoothly, nothing drops. Usually a
+      queue absorbing pressure. Often acceptable.</li>
+  <li><strong>Cliff</strong> — fine, fine, fine, then collapse. Almost always a hard resource
+      limit: a connection pool, a thread pool, a disk.</li>
+  <li><strong>Sawtooth</strong> — recovers and fails repeatedly. Something is retrying and
+      amplifying its own load.</li>
 </ul>
-""",
-    },
-    {
-        "slug": "load-testing-k6-thresholds",
-        "cat": "performance", "cat_label": "Performance",
-        "date": "2026-06-20", "read": "10 min",
-        "title": "Load Testing with k6 — Thresholds That Actually Gate a Release",
-        "excerpt": "p95 latency and error-rate thresholds wired into CI so a regression fails the build, not the on-call engineer. Includes the scenario model and a Grafana breakdown.",
-        "tags": ["k6", "load", "thresholds"],
-        "body": """
-<h2>A load test that can't fail is a report</h2>
-<p>Most performance testing produces a PDF nobody reads. The change that made ours matter was
-small: give the test a pass/fail opinion, and put it in the pipeline. k6 does this natively
-with thresholds — if one is breached, the process exits non-zero and the deploy stops.</p>
+<p>The cliff is the interesting one, because the cliff edge <em>is</em> your sizing number.</p>
 
-<h2>Model the scenarios, not "the load"</h2>
-<p>Real traffic isn't one flat shape. Ours is a steady browse pattern with a checkout spike, so
-the test says exactly that:</p>
-<pre><code>export const options = {
-  scenarios: {
-    browse: {
-      executor: 'ramping-vus',
-      startVUs: 0,
-      stages: [
-        { duration: '2m', target: 200 },
-        { duration: '5m', target: 200 },
-        { duration: '2m', target: 0 },
-      ],
-      exec: 'browse',
-    },
-    checkout_spike: {
-      executor: 'constant-arrival-rate',
-      rate: 40, timeUnit: '1s',
-      duration: '5m',
-      preAllocatedVUs: 100,
-      startTime: '3m',
-      exec: 'checkout',
-    },
-  },
-  thresholds: {
-    'http_req_failed': ['rate&lt;0.01'],
-    'http_req_duration{scenario:browse}': ['p(95)&lt;400'],
-    'http_req_duration{scenario:checkout}': ['p(95)&lt;900', 'p(99)&lt;2000'],
-    'checks': ['rate&gt;0.99'],
-  },
-};</code></pre>
-
-<p>Two things worth copying. First, <strong>per-scenario thresholds</strong> — checkout is legitimately
-slower than browse, and one global p95 hides both. Second, <code>constant-arrival-rate</code> for the
-spike: it holds throughput fixed even as the system slows, which is what real users do. VU-based
-executors accidentally back off under stress and flatter your results.</p>
-
-<h2>Pick thresholds from data, not vibes</h2>
-<p>We set each number from the current production p95 plus a 20% tolerance, pulled from the same
-dashboards the SRE team uses. Numbers invented in a meeting either never fail or always fail;
-either way people stop trusting them within a month.</p>
-
-<h2>Wiring it into CI</h2>
-<pre><code>- name: Load test
-  run: k6 run --out experimental-prometheus-rw perf/checkout.js
-  env:
-    K6_PROMETHEUS_RW_SERVER_URL: ${{ secrets.PROM_URL }}
-    BASE_URL: https://staging.internal</code></pre>
-<p>Streaming to Prometheus means the Grafana panel and the pass/fail gate read the same data. When
-a build fails you land on a dashboard filtered to that run, not a wall of terminal output.</p>
-
-<h2>Reading a failure</h2>
-<p>The useful move is to correlate three lines: p95 latency, requests per second, and error rate.</p>
+<h2>Watch four signals together</h2>
+<p>Throughput, latency, error rate, resource saturation. Any one alone misleads:</p>
 <ul>
-  <li>Latency climbs, throughput flat → a queue or a lock, usually a connection pool.</li>
-  <li>Latency and throughput both fall → something upstream is shedding load.</li>
-  <li>Latency fine, errors spike → a rate limiter or a dependency timing out.</li>
+  <li>Latency up, throughput flat → queueing or a lock.</li>
+  <li>Latency up, throughput <em>down</em> → past the knee, the system is losing ground.</li>
+  <li>Errors up, latency flat → something shedding load deliberately, like a limiter.</li>
+  <li>Everything fine, one resource pinned → the next bottleneck, waiting.</li>
 </ul>
-<p>The regression that justified the whole project was the first shape: p95 tripled at 180 VUs
-because the DB pool was capped at 20 connections. Config change, one line, caught before release.</p>
+<p>Correlating these across the run in Datadog is what turns "it fell over" into "it fell over
+because of this."</p>
 
-<blockquote>Set the threshold where you would actually page someone. If you wouldn't wake up for it,
-it isn't a gate — it's a metric.</blockquote>
+<h2>The data layer is usually the answer</h2>
+<p>Across these runs the recurring constraint was the database, not the application tier —
+specifically queries that were unremarkable at normal volume and pathological under sustained
+incident load. Finding them meant watching query-level latency during the ramp rather than
+looking at aggregate service health, which stayed green well past the point where individual
+queries had gone bad.</p>
+
+<blockquote>Aggregate health metrics are designed to stay calm. That's useful in production and
+actively unhelpful in a stress test.</blockquote>
+
+<h2>Rate limits and concurrency</h2>
+<p>A related but separate question: does the API behave correctly when many callers hit it at
+once? Rate limiting is meant to shed load — the test is whether it sheds the <em>right</em>
+load and whether the service stays stable while doing it. Driving concurrent access with JMeter
+against the microservices confirmed both the limiter's behaviour and that nothing downstream
+destabilised when it engaged.</p>
+
+<h2>What the number is for</h2>
+<p>The deliverable was never "we tested to 10M." It was: at this incident volume you need this
+infrastructure, and here is the evidence. That output shapes production sizing and customer
+deployment guidelines — which is why the breaking point, not the passing point, is the number
+worth finding.</p>
 """,
     },
     {
-        "slug": "appium-mobile-automation",
-        "cat": "mobile", "cat_label": "Mobile",
-        "date": "2026-06-12", "read": "7 min",
-        "title": "Stable Appium Automation on Real Android Devices",
-        "excerpt": "Element locators that survive OS updates, explicit waits over sleeps, and a device-farm strategy that keeps mobile regression under ten minutes.",
-        "tags": ["appium", "android", "mobile"],
+        "slug": "slack-chatops-for-qa",
+        "cat": "tooling", "cat_label": "Tooling",
+        "date": "2026-06-08", "read": "8 min",
+        "title": "100+ Slack ChatOps Utilities, and Why Support Adopted Them",
+        "excerpt": "Test execution, incident tracking and log collection driven from Slack — built for QA, adopted by support teams across every live deployment.",
+        "tags": ["chatops", "python", "slack"],
         "body": """
-<h2>Mobile flake has different causes</h2>
-<p>On the web, most flake is timing. On real devices you also get slow app starts, permission
-dialogs, OS-level popups, and animations that make an element visible before it's tappable.
-The good news is that all of them are addressable with the same discipline.</p>
+<h2>Built for one team, used by another</h2>
+<p>These utilities started as QA convenience: trigger a run, pull logs, check an incident,
+without leaving the channel where the conversation was already happening. The interesting part
+is that support teams picked them up and ran them across live customer deployments — a group
+nobody designed for.</p>
+<p>That happened for a specific reason worth generalising: <strong>the hard part of these tasks
+was never the task, it was knowing how to do it.</strong> Which host, which credential, which
+flag, which log path. A Slack command encodes all of that once, and then anyone can run it.</p>
 
-<h2>Locators that survive an OS update</h2>
-<p>XPath over a rendered hierarchy is the mobile equivalent of a CSS selector built from
-auto-generated class names — it works until the next release. Rank locators like this:</p>
+<h2>What makes a good ChatOps command</h2>
+<p>After a hundred of them, the ones that get used share traits:</p>
+<ul>
+  <li><strong>One job.</strong> A command that does one thing with two arguments beats a command
+      with a mode flag every time.</li>
+  <li><strong>Answers in the channel.</strong> If the output is a link to somewhere else, the
+      command saved nothing.</li>
+  <li><strong>Safe by default.</strong> Read-only unless clearly named otherwise. Anything
+      destructive confirms first.</li>
+  <li><strong>Says what it did.</strong> Including which environment it touched. Especially
+      which environment it touched.</li>
+</ul>
+
+<h2>The three categories that mattered</h2>
 <ol>
-  <li><code>accessibility id</code> — set by developers, stable, and it improves the app's actual
-      accessibility. Ask for it in the same PR as the feature.</li>
-  <li><code>resource-id</code> — stable enough, Android-specific.</li>
-  <li><code>UiSelector</code> / predicate strings — fine when scoped tightly.</li>
-  <li>XPath — last resort, and never absolute.</li>
+  <li><strong>Test execution</strong> — kick off suites, check status, fetch results without a CI
+      console login.</li>
+  <li><strong>Incident tracking</strong> — query incident state directly, mid-conversation,
+      instead of context-switching to a dashboard.</li>
+  <li><strong>Log collection</strong> — the runaway winner. Gathering logs from the right host
+      with the right scope is tedious, error-prone, and exactly what a command should do.</li>
 </ol>
-<pre><code># good
-el = driver.find_element(AppiumBy.ACCESSIBILITY_ID, "checkout-submit")
 
-# fragile
-el = driver.find_element(
-    AppiumBy.XPATH, "//android.widget.LinearLayout[3]/android.widget.Button[1]")</code></pre>
+<h2>Volume came from AI-assisted development</h2>
+<p>Getting to 100+ was possible because each new utility is mostly a variation on a solved
+shape: parse arguments, call a service, format a response, handle failure. That's a pattern an
+assistant accelerates well — and it shifts the bottleneck from typing to deciding what's worth
+building.</p>
+<p>The constraint became judgement, not throughput. Most command ideas shouldn't exist; the
+useful ones automate knowledge, not keystrokes.</p>
 
-<h2>Wait for interactable, not for present</h2>
-<p>A view can be in the hierarchy, on screen, and still mid-animation. Tapping it registers on
-whatever ends up under your finger a moment later — which is how you get a test that fails once
-every thirty runs with a screenshot showing the correct screen.</p>
-<pre><code>wait = WebDriverWait(driver, 20, poll_frequency=0.4)
-btn = wait.until(EC.element_to_be_clickable(
-    (AppiumBy.ACCESSIBILITY_ID, "checkout-submit")))
-btn.click()</code></pre>
-<p>Set a global <code>implicitlyWait</code> of zero and use explicit waits everywhere. Mixing the two
-produces waits that multiply in ways nobody can reason about.</p>
+<blockquote>The best of these didn't save time on the work. They saved the twenty minutes of
+figuring out how to start the work.</blockquote>
 
-<h2>Capabilities that stop the environment fighting you</h2>
-<pre><code>caps = {
-    "platformName": "Android",
-    "appium:automationName": "UiAutomator2",
-    "appium:autoGrantPermissions": True,
-    "appium:disableWindowAnimation": True,
-    "appium:newCommandTimeout": 120,
-    "appium:uiautomator2ServerLaunchTimeout": 60000,
-    "appium:noReset": False,
-}</code></pre>
-<p><code>autoGrantPermissions</code> removes an entire class of "unexpected dialog" failures.
-<code>disableWindowAnimation</code> alone cut our mobile flake by roughly half — no animation means no
-window where an element is visible but not yet hittable.</p>
+<h2>The lesson</h2>
+<p>Internal tooling gets judged on whether people use it, and people use it when it removes a
+question rather than a step. Nobody adopted a command because it was faster to type. They
+adopted it because they no longer had to remember how the thing worked.</p>
+""",
+    },
+    {
+        "slug": "unified-robot-framework-suite",
+        "cat": "automation", "cat_label": "Automation",
+        "date": "2026-05-27", "read": "9 min",
+        "title": "One Suite for API, Web and Mobile with Robot Framework",
+        "excerpt": "Three per-surface frameworks collapsed into a single Python and Robot Framework suite running in one CI pipeline with real-device testing.",
+        "tags": ["robot-framework", "python", "ci"],
+        "body": """
+<h2>Three frameworks, three sets of everything</h2>
+<p>The starting position was familiar: one framework for API tests, one for web, one for mobile.
+Each with its own runner, its own reporting, its own idea of test data, and its own CI job.
+Three places to fix any shared bug, three reports to reconcile, and no way to answer "did this
+release pass?" without opening all three.</p>
+<p>The surfaces were different. Almost everything around them was the same.</p>
 
-<h2>Emulators and real devices both, deliberately</h2>
-<p>Emulators are cheap, parallel, and reproducible. Real devices catch the things emulators can't:
-camera, biometrics, poor network, low memory. The split that worked:</p>
+<h2>Why keyword-driven worked here</h2>
+<p>Robot Framework's keyword abstraction fits this problem well: a keyword is just a named
+action, and nothing about that name has to reveal whether it's driving HTTP, a browser, or a
+device. So the layering falls out naturally:</p>
 <ul>
-  <li><strong>Every PR</strong> — smoke suite on emulators, four in parallel, under four minutes.</li>
-  <li><strong>Nightly</strong> — full regression on a device farm across three OS versions and two form factors.</li>
-  <li><strong>Pre-release</strong> — manual exploratory on the oldest supported device, because it always finds something.</li>
+  <li><strong>Business keywords</strong> — <em>Create Trip</em>, <em>Trigger Diagnostic Alert</em>.
+      Readable by people who don't write tests, stable across refactors.</li>
+  <li><strong>Technical keywords</strong> — the surface-specific work, backed by custom Python
+      libraries where the built-ins ran out.</li>
+  <li><strong>Shared services</strong> — auth, test data, config, reporting. Written once, used
+      by all three surfaces. This is where the duplication actually was.</li>
 </ul>
+<p>Custom Python libraries matter. Robot is a good orchestration layer and a bad place to write
+logic; anything with real branching belongs in Python, exposed as a keyword.</p>
 
-<h2>Where it landed</h2>
-<p>Mobile regression runs in nine minutes against six parallel emulators, and the nightly real-device
-pass is the only place we've seen genuine device-specific bugs — three in the last year, all of
-which would have shipped.</p>
+<h2>One pipeline</h2>
+<p>Consolidating into a single Jenkins pipeline — including real-device mobile execution —
+changed the reporting more than the running. One run, one report, one verdict. "Did this
+release pass?" became a question with one answer, which sounds trivial and was the main thing
+people wanted.</p>
+
+<h3>Real devices in CI</h3>
+<p>Real-device testing is where mobile gets honest — and where flake concentrates. What kept it
+manageable: treat device availability as an explicit precondition rather than an assumption,
+and fail the job clearly when a device isn't there instead of letting tests fail mysteriously.
+A pipeline that can't get a device should say so.</p>
+
+<blockquote>Most mobile "flake" I've chased turned out to be an environment problem wearing a
+test failure's clothes.</blockquote>
+
+<h2>What I'd keep and what I'd change</h2>
+<p><strong>Keep:</strong> the shared-services layer and business-keyword vocabulary. Those were
+the real wins and they'd apply in any framework.</p>
+<p><strong>Change:</strong> I'd push harder on moving logic into Python earlier. The temptation
+to solve one more thing in Robot syntax is strong and it always costs more later.</p>
+<p>The headline is three frameworks becoming one. The value was the shared layer underneath —
+the consolidation just forced us to build it.</p>
 """,
     },
 ]
@@ -638,20 +816,20 @@ HERO_JS = """<script>
     ['<span class="cmd"><span class="pr">byresh@green-suite</span>:<span class="pa">~/portfolio</span>$ pytest --profile -v</span>', 420],
     ['<span class="dim">========================= test session starts =========================</span>', 180],
     ['<span class="muted">collected 12 items</span>\\n', 260],
-    ['tests/profile.py::<span class="tname">test_role_is_sdet</span> <span class="pass">PASSED</span> <span class="dim">[  8%]</span>', 90],
-    ['tests/profile.py::<span class="tname">test_experience[8_years]</span> <span class="pass">PASSED</span> <span class="dim">[ 16%]</span>', 90],
-    ['tests/stack.py::<span class="tname">test_frameworks[playwright,selenium]</span> <span class="pass">PASSED</span> <span class="dim">[ 25%]</span>', 90],
-    ['tests/stack.py::<span class="tname">test_languages[python,ts,java]</span> <span class="pass">PASSED</span> <span class="dim">[ 33%]</span>', 90],
-    ['tests/ci.py::<span class="tname">test_suite_runtime_under[6min]</span> <span class="pass">PASSED</span> <span class="dim">[ 41%]</span>', 90],
-    ['tests/ci.py::<span class="tname">test_flaky_count_is_zero</span> <span class="pass">PASSED</span> <span class="dim">[ 50%]</span>', 90],
-    ['tests/api.py::<span class="tname">test_contract_verification[pact]</span> <span class="pass">PASSED</span> <span class="dim">[ 58%]</span>', 90],
-    ['tests/perf.py::<span class="tname">test_p95_latency_threshold</span> <span class="pass">PASSED</span> <span class="dim">[ 66%]</span>', 90],
-    ['tests/mobile.py::<span class="tname">test_appium_android_regression</span> <span class="pass">PASSED</span> <span class="dim">[ 75%]</span>', 90],
-    ['tests/quality.py::<span class="tname">test_coverage[critical_path]</span> <span class="pass">PASSED</span> <span class="dim">[ 83%]</span>', 90],
+    ['tests/profile.py::<span class="tname">test_role[senior_sdet]</span> <span class="pass">PASSED</span> <span class="dim">[  8%]</span>', 90],
+    ['tests/profile.py::<span class="tname">test_experience[11_years]</span> <span class="pass">PASSED</span> <span class="dim">[ 16%]</span>', 90],
+    ['tests/stack.py::<span class="tname">test_language[python]</span> <span class="pass">PASSED</span> <span class="dim">[ 25%]</span>', 90],
+    ['tests/stack.py::<span class="tname">test_frameworks[pytest,robot]</span> <span class="pass">PASSED</span> <span class="dim">[ 33%]</span>', 90],
+    ['tests/ai.py::<span class="tname">test_agent_pipeline[mcp]</span> <span class="pass">PASSED</span> <span class="dim">[ 41%]</span>', 90],
+    ['tests/ai.py::<span class="tname">test_log_triage[local_llm]</span> <span class="pass">PASSED</span> <span class="dim">[ 50%]</span>', 90],
+    ['tests/scale.py::<span class="tname">test_fleet[7000_vms]</span> <span class="pass">PASSED</span> <span class="dim">[ 58%]</span>', 90],
+    ['tests/scale.py::<span class="tname">test_stress[10M_incidents]</span> <span class="pass">PASSED</span> <span class="dim">[ 66%]</span>', 90],
+    ['tests/scale.py::<span class="tname">test_os_families[6]</span> <span class="pass">PASSED</span> <span class="dim">[ 75%]</span>', 90],
+    ['tests/tooling.py::<span class="tname">test_chatops_utilities[100+]</span> <span class="pass">PASSED</span> <span class="dim">[ 83%]</span>', 90],
     ['tests/quality.py::<span class="tname">test_manual_regressions</span> <span class="skip">SKIPPED</span> <span class="dim">(automated)</span> <span class="dim">[ 91%]</span>', 90],
     ['tests/hire.py::<span class="tname">test_open_to_work</span> <span class="pass">PASSED</span> <span class="dim">[100%]</span>\\n', 320],
     ['<span class="pass">=============== 11 passed, 1 skipped in 0.42s ===============</span>', 200],
-    ['<span class="muted">coverage: </span><span class="pass">92%</span><span class="muted"> of critical paths · 0 flakes · scroll down for the write-ups ↓</span>', 0]
+    ['<span class="muted">release readiness: </span><span class="pass">approved</span><span class="muted"> · scroll down for the write-ups ↓</span>', 0]
   ];
 
   if (reduce) {
@@ -721,249 +899,15 @@ FILTER_JS = """<script>
 
 
 # ============================================================
-# journey (about page)
-# ============================================================
-# TODO: replace these with your real roles, dates and companies.
-JOURNEY = [
-    {
-        "year": "2017", "short": "QA Engineer", "role": "QA Engineer",
-        "company": "First automation role", "period": "2017 — 2019",
-        "points": [
-            "Wrote the team's first automated regression pack, replacing a 200-case manual checklist",
-            "Owned defect triage and reporting across two Agile squads",
-            "Built reusable page objects that cut new-test authoring time noticeably",
-        ],
-        "tech": ["Selenium", "Java", "TestNG", "JIRA"],
-    },
-    {
-        "year": "2019", "short": "Automation Engr", "role": "Test Automation Engineer",
-        "company": "Web + API automation", "period": "2019 — 2021",
-        "points": [
-            "Extended coverage from UI-only to API-first, moving the bulk of assertions below the UI",
-            "Introduced data factories so tests stopped depending on seeded environments",
-            "Cut nightly regression runtime by roughly half through parallel execution",
-        ],
-        "tech": ["Selenium", "REST Assured", "Python", "pytest", "Jenkins"],
-    },
-    {
-        "year": "2021", "short": "Senior SDET", "role": "Senior SDET",
-        "company": "Framework ownership", "period": "2021 — 2023",
-        "points": [
-            "Rebuilt the framework on Playwright, retiring a brittle Selenium suite",
-            "Added trace-on-failure and a flake report that made retries visible instead of silent",
-            "Set the merge-queue quality gate that blocks on smoke + contract verification",
-        ],
-        "tech": ["Playwright", "TypeScript", "pytest", "GitHub Actions", "Docker"],
-    },
-    {
-        "year": "2023", "short": "Lead SDET", "role": "Lead SDET",
-        "company": "Platform quality", "period": "2023 — 2025",
-        "points": [
-            "Sharded 2,400 tests across parallel runners, taking the suite from 40 min to 6 min",
-            "Wired k6 thresholds into CI so performance regressions fail the build",
-            "Drove flaky tests in CI to zero and kept them there with a quarantine policy",
-        ],
-        "tech": ["Playwright", "k6", "Pact", "Kubernetes", "Allure", "Grafana"],
-    },
-    {
-        "year": "2025", "short": "SDET (current)", "role": "Software Development Engineer in Test",
-        "company": "Quality engineering", "period": "2025 — present",
-        "points": [
-            "Own end-to-end quality strategy across web, API and mobile surfaces",
-            "Mentor engineers on test design, shift-left practice and CI hygiene",
-            "Report release readiness from pipeline data rather than gut feel",
-        ],
-        "tech": ["Playwright", "pytest", "Appium", "GitHub Actions", "k6", "Pact"],
-    },
-]
-
-
-def journey_html():
-    nodes = []
-    for i, j in enumerate(JOURNEY):
-        cls = "journey-node" + (" active done" if i == len(JOURNEY) - 1 else "")
-        nodes.append(f"""        <button class="{cls}" data-idx="{i}" type="button">
-          <span class="journey-node-dot"><span class="journey-node-dot-inner"></span></span>
-          <span class="journey-node-year">{j['year']}</span>
-          <span class="journey-node-role">{j['short']}</span>
-        </button>""")
-    return "\n".join(nodes)
-
-
-def journey_data_js():
-    import json
-    return "<script>window.GS_JOURNEY = " + json.dumps(JOURNEY) + ";</script>"
-
-
-JOURNEY_JS = journey_data_js() + """
-<script>
-(function () {
-  var data = window.GS_JOURNEY || [];
-  var track = document.getElementById('journey-track');
-  if (!track) return;
-  var fill = document.getElementById('journey-fill');
-  var detail = document.getElementById('journey-detail');
-  var prev = document.getElementById('j-prev');
-  var next = document.getElementById('j-next');
-  var counter = document.getElementById('j-counter');
-  var nodes = Array.prototype.slice.call(track.querySelectorAll('.journey-node'));
-  var idx = data.length - 1;
-
-  function render() {
-    var j = data[idx];
-    nodes.forEach(function (n, i) {
-      n.classList.toggle('active', i === idx);
-      n.classList.toggle('done', i <= idx);
-    });
-    if (fill) {
-      fill.style.width = (data.length < 2 ? 100 : (idx / (data.length - 1)) * 100) + '%';
-    }
-    detail.innerHTML =
-      '<div class="journey-detail-top">' +
-        '<div>' +
-          '<h3 class="journey-detail-role">' + j.role + '</h3>' +
-          '<div class="journey-detail-company">' + j.company + '</div>' +
-        '</div>' +
-        '<div class="journey-detail-period">' + j.period + '</div>' +
-      '</div>' +
-      '<ul class="journey-detail-points">' +
-        j.points.map(function (p) { return '<li>' + p + '</li>'; }).join('') +
-      '</ul>' +
-      '<div class="journey-detail-tech">' +
-        j.tech.map(function (t) { return '<span>' + t + '</span>'; }).join('') +
-      '</div>';
-    counter.textContent = (idx + 1) + ' / ' + data.length;
-    prev.disabled = idx === 0;
-    next.disabled = idx === data.length - 1;
-  }
-
-  track.addEventListener('click', function (ev) {
-    var b = ev.target.closest('.journey-node');
-    if (!b) return;
-    idx = parseInt(b.dataset.idx, 10);
-    render();
-  });
-  prev.addEventListener('click', function () { if (idx > 0) { idx--; render(); } });
-  next.addEventListener('click', function () { if (idx < data.length - 1) { idx++; render(); } });
-  render();
-})();
-</script>"""
-
-
-# ============================================================
-# skills
-# ============================================================
-
-SKILL_GROUPS = [
-    ("automation", "🎭", "UI Automation", [
-        ("Playwright", 95), ("Selenium WebDriver", 90),
-        ("Appium", 80), ("Cypress", 70),
-    ], ["Page objects", "Visual diffing", "Trace analysis", "Cross-browser", "Component testing"]),
-    ("languages", "⌨", "Languages", [
-        ("Python", 95), ("TypeScript / JavaScript", 88),
-        ("Java", 80), ("Bash", 78), ("SQL", 75),
-    ], ["pytest", "TestNG", "Jest", "asyncio", "Type hints"]),
-    ("cicd", "⚙", "CI/CD & Infra", [
-        ("GitHub Actions", 92), ("Docker", 88),
-        ("Jenkins", 82), ("Kubernetes", 70),
-    ], ["Matrix builds", "Test sharding", "Quality gates", "Artifact reporting", "Caching"]),
-    ("api", "🔌", "API & Performance", [
-        ("REST / HTTP testing", 92), ("k6", 85),
-        ("Pact (contract testing)", 82), ("JMeter", 75),
-    ], ["Schema validation", "Threshold gating", "Mock servers", "gRPC", "Postman/Newman"]),
-    ("practice", "🧭", "Quality Practice", [
-        ("Test strategy & design", 92), ("Flake forensics", 90),
-        ("Shift-left reviews", 85), ("Release readiness", 85),
-    ], ["Risk-based testing", "Exploratory", "Metrics & reporting", "Mentoring", "Agile QA"]),
-]
-
-
-def skills_html():
-    tabs, panels = [], []
-    for i, (key, icon, label, bars, tiles) in enumerate(SKILL_GROUPS):
-        active = " active" if i == 0 else ""
-        tabs.append(
-            f'      <button class="skills-tab{active}" type="button" role="tab" '
-            f'aria-selected="{"true" if i == 0 else "false"}" data-panel="{key}">'
-            f'<span>{icon}</span><span>{label}</span>'
-            f'<span class="count">{len(bars)}</span></button>'
-        )
-        rows = "\n".join(
-            f"""          <div class="skill-row">
-            <div class="top"><span class="nm">{n}</span><span class="pc">{p}%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="{p}"></div></div>
-          </div>""" for n, p in bars
-        )
-        tile_html = "\n".join(
-            f'          <div class="tile"><span>▹</span><span>{t}</span></div>' for t in tiles
-        )
-        panels.append(f"""      <section class="skills-panel{active}" id="panel-{key}" role="tabpanel">
-        <div class="card">
-          <h4>{label} — proficiency</h4>
-          <div class="skill-rows">
-{rows}
-          </div>
-          <div class="tile-grid">
-{tile_html}
-          </div>
-        </div>
-      </section>""")
-    return "\n".join(tabs), "\n".join(panels)
-
-
-# ============================================================
-# projects
-# ============================================================
-
-PROJECTS = [
-    ("g-green", "🎭", "Playwright E2E Framework", "Web · TypeScript",
-     "Trace-first end-to-end framework with fixture-scoped auth, per-test data factories and a flake report that makes every retry visible instead of silent.",
-     [("2,400+", "tests"), ("6 min", "full run")], ["Playwright", "TypeScript", "GitHub Actions", "Allure"]),
-    ("g-blue", "⚙", "Sharded pytest Pipeline", "CI/CD · Python",
-     "Duration-balanced sharding across a runner matrix, with merged JUnit reporting so a developer sees one verdict rather than six jobs.",
-     [("40→6", "minutes"), ("24×", "parallelism")], ["pytest", "pytest-xdist", "pytest-split", "Actions"]),
-    ("g-violet", "🔌", "Contract Testing Gate", "API · Pact",
-     "Consumer-driven contracts with a broker and a can-i-deploy gate — three breaking API changes stopped before they reached staging.",
-     [("3", "breakages caught"), ("0", "reached prod")], ["Pact", "Node", "Docker", "Broker"]),
-    ("g-warm", "📈", "k6 Performance Gate", "Performance",
-     "Scenario-modelled load tests with per-scenario p95/p99 thresholds streamed to Prometheus, wired so a regression fails the build.",
-     [("p95", "gated"), ("<1%", "error budget")], ["k6", "Prometheus", "Grafana", "Actions"]),
-    ("g-pink", "🐳", "Ephemeral Selenium Grid", "Cross-browser",
-     "Per-run hub and node containers with a readiness gate and log capture on failure — no standing grid, no cross-team contention.",
-     [("22→7", "minutes"), ("2", "browsers")], ["Selenium Grid", "Docker Compose", "Actions"]),
-    ("g-lilac", "📱", "Mobile Regression Suite", "Mobile · Android",
-     "Accessibility-id-first locators, animation-disabled capabilities and an emulator/real-device split that keeps mobile regression under ten minutes.",
-     [("9 min", "regression"), ("3", "OS versions")], ["Appium", "Python", "UiAutomator2", "Device farm"]),
-]
-
-
-def projects_html():
-    out = []
-    for grad, icon, title, domain, desc, metrics, tech in PROJECTS:
-        m = "".join(f"<div><b>{v}</b>{k}</div>" for v, k in metrics)
-        t = "".join(f"<span>{x}</span>" for x in tech)
-        out.append(f"""    <article class="proj reveal">
-      <div class="proj-banner" style="background: var(--{grad})">{icon}</div>
-      <div class="proj-body">
-        <h3>{title}</h3>
-        <div class="proj-domain">{domain}</div>
-        <p>{desc}</p>
-        <div class="proj-metrics">{m}</div>
-        <div class="journey-detail-tech">{t}</div>
-      </div>
-    </article>""")
-    return "\n".join(out)
-
-
-# ============================================================
 # pages
 # ============================================================
 
 def build():
-    write = lambda path, html: (
-        os.makedirs(os.path.dirname(os.path.join(ROOT, path)) or ROOT, exist_ok=True),
-        open(os.path.join(ROOT, path), "w", encoding="utf-8").write(html),
-    )
+    def write(path, html):
+        full = os.path.join(ROOT, path)
+        os.makedirs(os.path.dirname(full), exist_ok=True)
+        with open(full, "w", encoding="utf-8") as fh:
+            fh.write(html)
 
     # ---------------- index ----------------
     featured = "\n".join(post_card(p) for p in POSTS[:3])
@@ -983,10 +927,11 @@ def build():
       </div>
       <div class="reveal in">
         <div class="badge"><span class="pulse"></span> Open to opportunities</div>
-        <h1 class="hero-name">{SITE['name']} <span class="gradient">· SDET</span></h1>
-        <p class="hero-role">Test Automation · CI/CD Quality Gates · Performance</p>
-        <p class="hero-desc">8+ years building test frameworks and pipelines for web, API and mobile —
-          turning slow, flaky suites into fast, deterministic ones that engineers actually trust.</p>
+        <h1 class="hero-name">Byresh <span class="gradient">Thimmeshappa</span></h1>
+        <p class="hero-role">Senior SDET / QA Strategist · AI-Augmented Quality Engineering</p>
+        <p class="hero-desc">11+ years owning end-to-end quality for enterprise software and security
+          platforms — now building agentic AI and local-LLM workflows that generate, review and
+          maintain test automation, backed by scale testing across thousands of machines.</p>
         <div class="btn-row">
           <a class="btn btn-primary" href="projects.html">view work →</a>
           <a class="btn" href="blog.html">read the notes</a>
@@ -1013,22 +958,24 @@ def build():
   </div>
   <div class="card-grid">
     <div class="card hl-card reveal">
-      <span class="hl-icon">🎭</span>
-      <h3>Automation architecture</h3>
-      <p>UI and API frameworks built to be read and maintained by the whole team — page objects,
-         data factories, and fixtures that don't leak state between tests.</p>
+      <span class="hl-icon">🤖</span>
+      <h3>Agentic AI for QA</h3>
+      <p>Multi-agent, MCP-orchestrated pipelines that turn tickets and API specs into reviewed,
+         runnable automation — with human approval gates and a self-healing policy that escalates
+         instead of quietly masking regressions.</p>
     </div>
     <div class="card hl-card blue reveal">
-      <span class="hl-icon">⚙</span>
-      <h3>CI/CD quality gates</h3>
-      <p>Sharded, parallel pipelines with gates that mean something: smoke, contracts and
-         performance thresholds that block a bad merge instead of reporting on it later.</p>
+      <span class="hl-icon">🖧</span>
+      <h3>Scale &amp; performance</h3>
+      <p>Full-lifecycle scale testing across thousands of VMs and six OS families, stress runs to
+         10M incidents, and the capacity analysis that turns a breaking point into production
+         sizing guidance.</p>
     </div>
     <div class="card hl-card violet reveal">
-      <span class="hl-icon">🔬</span>
-      <h3>Flake forensics</h3>
-      <p>Traces over guesses. Quarantine, diagnose, fix, un-quarantine — the loop that took a
-         4% flake rate to zero and kept the merge queue moving.</p>
+      <span class="hl-icon">🚦</span>
+      <h3>Release governance</h3>
+      <p>Test strategy, risk-based prioritisation and quality gates — acting as final QA approver,
+         with metrics that show whether the gates are actually catching anything.</p>
     </div>
   </div>
 
@@ -1046,8 +993,8 @@ def build():
 </main>"""
     write("index.html", shell(
         slug="home",
-        title="green-suite — Byresh · SDET",
-        description="Test automation, CI/CD pipelines, flaky-test forensics, and quality engineering notes from an SDET.",
+        title="green-suite — Byresh Thimmeshappa · Senior SDET",
+        description="Senior SDET and QA Strategist with 11+ years in test strategy, large-scale performance validation, and agentic AI quality engineering.",
         body=index_body, extra_js=HERO_JS))
 
     # ---------------- about ----------------
@@ -1055,8 +1002,9 @@ def build():
 
   <section class="page-head reveal in">
     <div class="eyebrow">$ whoami</div>
-    <h1>About <span class="gradient">{SITE['name']}</span></h1>
-    <p>How I got from manual test cases to owning quality for a platform.</p>
+    <h1>About <span class="gradient">Byresh</span></h1>
+    <p>Eleven years of owning quality — from device labs and IoT pipelines to endpoint security at
+       scale, and now to agents that write and maintain the tests.</p>
   </section>
 
   <div class="sec-head reveal"><span class="pr">$</span><h2>cat ./about.md</h2></div>
@@ -1070,16 +1018,21 @@ def build():
       </div>
     </div>
     <div>
-      <p>I'm a <strong>Software Development Engineer in Test</strong> with 8+ years building
-        test frameworks, CI pipelines and quality gates for web, API and mobile products. My
-        work sits where testing meets infrastructure: making suites fast enough that people
-        run them, and trustworthy enough that a red build means something.</p>
-      <p>Most of what I do falls into three buckets — designing automation that survives
-        refactors, wiring quality gates into CI so problems fail early, and doing the
-        unglamorous forensics that turns a flaky suite into a deterministic one.</p>
-      <p>I'm a believer in shift-left: the cheapest bug is the one caught in review, the second
-        cheapest is caught by a test written alongside the feature. Everything after that is
-        expensive.</p>
+      <p>I'm a <strong>Senior SDET and QA Strategist</strong> with 11+ years owning end-to-end
+        quality for enterprise software and security platforms — from requirement review through
+        production sign-off. My current work centres on an endpoint security platform, where I own
+        test strategy, act as final QA approver for customer-facing releases, and run performance
+        validation at a scale where the test harness becomes its own engineering problem.</p>
+      <p>The thread through all of it is <strong>evidence</strong>. Quality gates that can actually
+        fail a release. Scale tests that can state their own denominator. Stress runs that produce
+        a sizing number rather than a green tick. Metrics — defect escape rate, coverage,
+        pass/fail trends — that change the next release instead of decorating the last one.</p>
+      <p>Most recently I've been building <strong>agentic AI into the QA workflow</strong>: a
+        multi-agent, MCP-orchestrated pipeline that turns tickets and OpenAPI specs into reviewed
+        test automation, and a local-LLM log-analysis framework that finds the failing component
+        in high-volume security logs. Both are designed around human review gates, because the
+        failure mode of generated tests isn't obvious breakage — it's plausible and wrong.</p>
+      <p>Based in {SITE['location']}.</p>
     </div>
   </div>
 
@@ -1104,21 +1057,21 @@ def build():
   <div class="card-grid">
     <div class="card hl-card reveal">
       <span class="hl-icon">🧭</span>
-      <h3>Risk first</h3>
-      <p>Coverage numbers are a proxy. I start from what actually hurts if it breaks, and put the
-         deepest testing there.</p>
+      <h3>Risk-based, not exhaustive</h3>
+      <p>Test effort follows impact. Security detection, deployment and performance get depth;
+         low-risk surfaces get proportionate coverage and an honest note saying so.</p>
     </div>
     <div class="card hl-card blue reveal">
-      <span class="hl-icon">⚡</span>
-      <h3>Fast or ignored</h3>
-      <p>A suite people wait 40 minutes for is a suite people route around. Speed is a
-         correctness feature.</p>
+      <span class="hl-icon">⬅</span>
+      <h3>Shift left, genuinely</h3>
+      <p>In requirement and design reviews before development starts, looking for testability gaps
+         while they still cost a conversation rather than a release.</p>
     </div>
     <div class="card hl-card violet reveal">
       <span class="hl-icon">📊</span>
-      <h3>Evidence over opinion</h3>
-      <p>Traces, timings and flake reports. Release readiness should come off a dashboard, not
-         out of a meeting.</p>
+      <h3>Evidence over assertion</h3>
+      <p>Release readiness comes off dashboards correlating test execution with production
+         telemetry — not from a status meeting.</p>
     </div>
   </div>
 
@@ -1126,44 +1079,50 @@ def build():
   <div class="card-grid two">
     <div class="card reveal">
       <h4>degree</h4>
-      <h3>Bachelor of Engineering</h3>
-      <p>Computer Science &amp; Engineering<br /><span class="dim">TODO: update institution and years</span></p>
+      <h3>B.E., Computer Science &amp; Engineering</h3>
+      <p>Sapthagiri College of Engineering, VTU — First Class</p>
     </div>
     <div class="card reveal">
       <h4>always on</h4>
       <h3>Continuous learning</h3>
-      <p>Framework internals, distributed systems failure modes, and whatever the last
-         production incident taught me. Notes go in the <a href="blog.html">blog</a>.</p>
+      <p>Agent architecture, local model tooling, and whatever the last scale run taught me.
+         Notes go in the <a href="blog.html">blog</a>.</p>
     </div>
   </div>
 
 </main>"""
     write("about.html", shell(
         slug="about",
-        title="about — Byresh · SDET",
-        description="8+ years of test automation, CI/CD quality gates and flake forensics — the career journey behind green-suite.",
+        title="about — Byresh Thimmeshappa · Senior SDET",
+        description="11+ years in quality engineering: test strategy, scale and performance validation, and agentic AI QA workflows.",
         body=about_body, extra_js=JOURNEY_JS))
 
     # ---------------- skills ----------------
-    tabs, panels = skills_html()
-    total = sum(len(g[3]) + len(g[4]) for g in SKILL_GROUPS)
+    tabs, mobile, panels = skills_html()
+    total = sum(len(g[4]) for g in SKILL_GROUPS)
     skills_body = f"""<main class="wrap">
 
   <section class="page-head reveal in">
     <div class="eyebrow">$ pip list --local</div>
-    <h1>Technical <span class="gradient">stack</span></h1>
-    <p>Tools and practices I use daily, grouped by what they're for. Percentages are
-       self-assessed depth, not certification scores.</p>
+    <h1>Technical <span class="gradient">arsenal</span></h1>
+    <p>Tools and practices I work with, grouped by what they're for.</p>
   </section>
 
   <div class="sec-head reveal"><span class="pr">$</span><h2>ls ./skills</h2>
     <span class="note">{total} entries</span></div>
 
+  <div class="skills-tabs-mobile" id="skills-tabs-mobile" role="tablist">
+{mobile}
+  </div>
+
   <div class="skills-layout">
-    <div class="skills-tabs reveal" id="skills-tabs" role="tablist">
+    <div class="skills-sidebar reveal" id="skills-tabs" role="tablist">
 {tabs}
+      <div class="skills-sidebar-total">
+        <span class="skills-sidebar-total-num">{total}</span> total skills
+      </div>
     </div>
-    <div class="reveal">
+    <div class="skills-content reveal">
 {panels}
     </div>
   </div>
@@ -1171,24 +1130,25 @@ def build():
   <div class="sec-head reveal"><span class="pr">$</span><h2>cat ./working-agreements</h2></div>
   <div class="card-grid">
     <div class="card hl-card reveal">
-      <span class="hl-icon">🧪</span><h3>Test pyramid, honestly</h3>
-      <p>Most assertions below the UI. E2E reserved for journeys that genuinely need a browser.</p>
+      <span class="hl-icon">\U0001F6A6</span><h3>Gates, not dashboards</h3>
+      <p>If a check can't block a release, it isn't a gate — and it will be ignored within a month.</p>
     </div>
     <div class="card hl-card warm reveal">
-      <span class="hl-icon">🚦</span><h3>Gates, not dashboards</h3>
-      <p>If a check can't fail the build, it isn't a gate — and it will be ignored within a month.</p>
+      <span class="hl-icon">\U0001F50D</span><h3>Evidence with every claim</h3>
+      <p>A tool that reports a conclusion without the lines it came from just adds a step.</p>
     </div>
     <div class="card hl-card pink reveal">
-      <span class="hl-icon">🧹</span><h3>Delete dead tests</h3>
-      <p>A quarantined test that nobody fixes in two weeks gets removed. Ignored tests cost trust.</p>
+      <span class="hl-icon">\U0001F91D</span><h3>Humans on the boundaries</h3>
+      <p>Agents can draft, repair and report. Merging is a person's call, and every auto-fix is
+         logged for audit.</p>
     </div>
   </div>
 
 </main>"""
     write("skills.html", shell(
         slug="skills",
-        title="skills — Byresh · SDET",
-        description="Automation, languages, CI/CD, API and performance tooling used daily by an SDET.",
+        title="skills — Byresh Thimmeshappa · Senior SDET",
+        description="Agentic AI and MCP orchestration, Python automation, scale and performance testing, AWS and CI/CD, quality practice.",
         body=skills_body))
 
     # ---------------- projects ----------------
@@ -1197,7 +1157,8 @@ def build():
   <section class="page-head reveal in">
     <div class="eyebrow">$ ls ./projects</div>
     <h1>Things I've <span class="gradient">built</span></h1>
-    <p>Frameworks, pipelines and quality gates — with the numbers they actually moved.</p>
+    <p>Pipelines, harnesses and tooling — with the numbers they actually moved. Employer and
+       product names are kept generic here by choice.</p>
   </section>
 
   <div class="sec-head reveal"><span class="pr">$</span><h2>ls -l ./projects</h2>
@@ -1210,33 +1171,31 @@ def build():
   <div class="sec-head reveal"><span class="pr">$</span><h2>echo $NEXT</h2></div>
   <div class="card reveal">
     <h3>Want the detail behind any of these?</h3>
-    <p>Most of them have a write-up in the <a href="blog.html">blog</a> covering what broke,
-       what the fix was, and what I'd do differently. Or just
-       <a href="contact.html">send a message</a>.</p>
+    <p>Several have a write-up in the <a href="blog.html">blog</a> covering the design, what broke,
+       and what I'd do differently. Or just <a href="contact.html">send a message</a>.</p>
   </div>
 
 </main>"""
     write("projects.html", shell(
         slug="projects",
-        title="projects — Byresh · SDET",
-        description="Test automation frameworks, sharded CI pipelines, contract testing gates and performance suites.",
+        title="projects — Byresh Thimmeshappa · Senior SDET",
+        description="Multi-agent MCP test pipeline, local-LLM log analysis, 7,000-VM scale framework, stress harness and ChatOps tooling.",
         body=projects_body))
 
     # ---------------- blog ----------------
     cards = "\n".join(post_card(p) for p in POSTS)
-    cats = [("all", "all")] + [(p["cat"], p["cat_label"]) for p in POSTS]
-    seen, chips = set(), []
-    for key, label in cats:
-        if key in seen:
+    seen, chips = set(), ['    <button class="chip active" data-cat="all">all</button>']
+    for p in POSTS:
+        if p["cat"] in seen:
             continue
-        seen.add(key)
-        chips.append(f'    <button class="chip{" active" if key == "all" else ""}" data-cat="{key}">{label}</button>')
+        seen.add(p["cat"])
+        chips.append(f'    <button class="chip" data-cat="{p["cat"]}">{p["cat_label"]}</button>')
     blog_body = f"""<main class="wrap">
 
   <section class="page-head reveal in">
     <div class="eyebrow">$ ls ./posts --sort=recent</div>
     <h1>Notes from the <span class="gradient">pipeline</span></h1>
-    <p>Write-ups on test automation, CI/CD and the failure modes in between.</p>
+    <p>Write-ups on agentic AI in QA, testing at scale, and the tooling in between.</p>
   </section>
 
   <div class="sec-head reveal"><span class="pr">$</span><h2>grep ./posts</h2>
@@ -1262,17 +1221,25 @@ def build():
 </main>"""
     write("blog.html", shell(
         slug="blog",
-        title="blog — Byresh · SDET",
-        description="Write-ups on Playwright, pytest sharding, contract testing, k6 thresholds and mobile automation.",
+        title="blog — Byresh Thimmeshappa · Senior SDET",
+        description="Write-ups on multi-agent test pipelines, local-LLM log triage, scale testing and QA tooling.",
         body=blog_body, extra_js=FILTER_JS))
 
     # ---------------- contact ----------------
+    linkedin_row = ""
+    if SITE["linkedin"]:
+        linkedin_row = f"""      <a class="contact-item" href="{SITE['linkedin']}" target="_blank" rel="noopener noreferrer">
+        <span class="ico">in</span>
+        <span><span class="k">linkedin</span><br /><span class="v">connect</span></span>
+      </a>
+"""
     contact_body = f"""<main class="wrap">
 
   <section class="page-head reveal in">
     <div class="eyebrow">$ ./contact --open</div>
     <h1>Get in <span class="gradient">touch</span></h1>
-    <p>Open to talking about quality engineering, automation problems, or working together.</p>
+    <p>Open to talking about quality engineering, AI-augmented testing, scale problems, or working
+       together.</p>
   </section>
 
   <div class="sec-head reveal"><span class="pr">$</span><h2>cat ./contact.json</h2></div>
@@ -1286,12 +1253,12 @@ def build():
       </a>
       <a class="contact-item" href="{SITE['github']}" target="_blank" rel="noopener noreferrer">
         <span class="ico">⌥</span>
-        <span><span class="k">github</span><br /><span class="v">byresh-sdet</span></span>
+        <span><span class="k">github</span><br /><span class="v">{SITE['github_label']}</span></span>
       </a>
-      <a class="contact-item" href="{SITE['linkedin']}" target="_blank" rel="noopener noreferrer">
-        <span class="ico">in</span>
-        <span><span class="k">linkedin</span><br /><span class="v">connect</span></span>
-      </a>
+{linkedin_row}      <div class="contact-item">
+        <span class="ico">◉</span>
+        <span><span class="k">location</span><br /><span class="v">{SITE['location']}</span></span>
+      </div>
       <div class="contact-item">
         <span class="ico">◉</span>
         <span><span class="k">status</span><br /><span class="v" style="color:var(--pass)">open to opportunities</span></span>
@@ -1323,13 +1290,13 @@ def build():
   <div class="card-grid">
     <div class="card hl-card reveal">
       <span class="hl-icon">🤝</span><h3>Good fits</h3>
-      <p>SDET / QE roles where automation and CI are treated as engineering work, not a
-         reporting function.</p>
+      <p>Senior SDET, QA architect or quality-engineering leadership roles where testing is treated
+         as engineering work.</p>
     </div>
     <div class="card hl-card blue reveal">
       <span class="hl-icon">💬</span><h3>Happy to chat about</h3>
-      <p>Flake triage, sharding strategies, contract testing, or reviewing a test framework you're
-         unhappy with.</p>
+      <p>Agent design for test generation, self-healing policy, scale-test harness design, or
+         capacity analysis under load.</p>
     </div>
     <div class="card hl-card violet reveal">
       <span class="hl-icon">⏱</span><h3>Response time</h3>
@@ -1355,8 +1322,8 @@ def build():
 </script>"""
     write("contact.html", shell(
         slug="contact",
-        title="contact — Byresh · SDET",
-        description="Get in touch about quality engineering, test automation and CI/CD work.",
+        title="contact — Byresh Thimmeshappa · Senior SDET",
+        description="Get in touch about quality engineering, AI-augmented testing and scale performance work.",
         body=contact_body, extra_js=contact_js))
 
     # ---------------- posts ----------------
@@ -1392,7 +1359,7 @@ def build():
 </main>"""
         write(f"posts/{p['slug']}.html", shell(
             slug="blog",
-            title=f"{p['title']} — Byresh · SDET",
+            title=f"{p['title']} — Byresh Thimmeshappa",
             description=re.sub(r"\s+", " ", p["excerpt"]),
             body=body, depth=1))
 

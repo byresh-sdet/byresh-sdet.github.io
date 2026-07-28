@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="Write-ups on Playwright, pytest sharding, contract testing, k6 thresholds and mobile automation." />
-<title>blog — Byresh · SDET</title>
+<meta name="description" content="Write-ups on multi-agent test pipelines, local-LLM log triage, scale testing and QA tooling." />
+<title>blog — Byresh Thimmeshappa · Senior SDET</title>
 <link rel="icon" type="image/png" href="assets/img/favicon.png" />
 <link rel="apple-touch-icon" href="assets/img/favicon.png" />
-<meta property="og:title" content="blog — Byresh · SDET" />
-<meta property="og:description" content="Write-ups on Playwright, pytest sharding, contract testing, k6 thresholds and mobile automation." />
+<meta property="og:title" content="blog — Byresh Thimmeshappa · Senior SDET" />
+<meta property="og:description" content="Write-ups on multi-agent test pipelines, local-LLM log triage, scale testing and QA tooling." />
 <meta property="og:type" content="website" />
 <meta property="og:image" content="https://byresh-sdet.github.io/assets/img/byresh-400.jpg" />
 <meta name="twitter:card" content="summary" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/style.css" />
+<link rel="stylesheet" href="assets/css/style.css?v=aebde1f2" />
 <script>
   // set theme before first paint so there is no light/dark flash
   try {
@@ -50,7 +50,7 @@
   <section class="page-head reveal in">
     <div class="eyebrow">$ ls ./posts --sort=recent</div>
     <h1>Notes from the <span class="gradient">pipeline</span></h1>
-    <p>Write-ups on test automation, CI/CD and the failure modes in between.</p>
+    <p>Write-ups on agentic AI in QA, testing at scale, and the tooling in between.</p>
   </section>
 
   <div class="sec-head reveal"><span class="pr">$</span><h2>grep ./posts</h2>
@@ -64,76 +64,76 @@
   </div>
   <div class="chips reveal" id="chips">
     <button class="chip active" data-cat="all">all</button>
-    <button class="chip" data-cat="playwright">Playwright</button>
-    <button class="chip" data-cat="cicd">CI/CD</button>
-    <button class="chip" data-cat="api">API</button>
-    <button class="chip" data-cat="selenium">Selenium</button>
-    <button class="chip" data-cat="performance">Performance</button>
-    <button class="chip" data-cat="mobile">Mobile</button>
+    <button class="chip" data-cat="ai">Agentic AI</button>
+    <button class="chip" data-cat="scale">Scale</button>
+    <button class="chip" data-cat="tooling">Tooling</button>
+    <button class="chip" data-cat="automation">Automation</button>
   </div>
 
   <div class="grid" style="margin-top:20px">
     <div class="posts" id="posts">
-      <article class="post reveal" data-cat="playwright" data-tags="flaky playwright traces">
-        <div class="meta"><span class="cat">Playwright</span><span>2026-07-15</span><span class="dim">·</span><span>11 min</span></div>
-        <h3><a href="posts/killing-flaky-tests-playwright.html">Killing Flaky Tests: Auto-Retry vs. Root-Cause</a></h3>
-        <p>Retries hide flake; they don't fix it. A framework for triaging the three real causes — timing, test-data bleed, and shared state — with Playwright traces as evidence.</p>
-        <div class="foot"><div class="tags"><span class="tag">flaky</span><span class="tag">playwright</span><span class="tag">traces</span></div><a class="read" href="posts/killing-flaky-tests-playwright.html">read →</a></div>
+      <article class="post reveal" data-cat="ai" data-tags="mcp agents llm">
+        <div class="meta"><span class="cat">Agentic AI</span><span>2026-07-18</span><span class="dim">·</span><span>12 min</span></div>
+        <h3><a href="posts/multi-agent-test-pipeline-mcp.html">Designing a Multi-Agent Test Pipeline with MCP</a></h3>
+        <p>Four agent roles — extraction, generation, review, automation — turning tickets and OpenAPI specs into runnable API tests, with a human gate at every stage.</p>
+        <div class="foot"><div class="tags"><span class="tag">mcp</span><span class="tag">agents</span><span class="tag">llm</span></div><a class="read" href="posts/multi-agent-test-pipeline-mcp.html">read →</a></div>
       </article>
-      <article class="post reveal" data-cat="cicd" data-tags="pytest github-actions xdist">
-        <div class="meta"><span class="cat">CI/CD</span><span>2026-07-11</span><span class="dim">·</span><span>9 min</span></div>
-        <h3><a href="posts/sharding-pytest-suite-ci.html">From 40 min to 6 min: Sharding a pytest Suite Across Runners</a></h3>
-        <p>Splitting 2,400 tests across parallel GitHub Actions runners with pytest-xdist and load-balanced sharding — plus how to keep flaky-order failures from creeping back in.</p>
-        <div class="foot"><div class="tags"><span class="tag">pytest</span><span class="tag">github-actions</span><span class="tag">xdist</span></div><a class="read" href="posts/sharding-pytest-suite-ci.html">read →</a></div>
+      <article class="post reveal" data-cat="ai" data-tags="local-llm logs rca">
+        <div class="meta"><span class="cat">Agentic AI</span><span>2026-07-10</span><span class="dim">·</span><span>9 min</span></div>
+        <h3><a href="posts/local-llm-log-triage.html">Local LLMs for Security Log Triage</a></h3>
+        <p>High-volume security logs, parsed and pattern-matched locally to point at the failing component — cutting the manual step that sat in front of every RCA.</p>
+        <div class="foot"><div class="tags"><span class="tag">local-llm</span><span class="tag">logs</span><span class="tag">rca</span></div><a class="read" href="posts/local-llm-log-triage.html">read →</a></div>
       </article>
-      <article class="post reveal" data-cat="api" data-tags="pact rest contracts">
-        <div class="meta"><span class="cat">API</span><span>2026-07-04</span><span class="dim">·</span><span>8 min</span></div>
-        <h3><a href="posts/contract-testing-pact.html">Contract Testing REST APIs with Pact — What Broke and Why</a></h3>
-        <p>Consumer-driven contracts caught three breaking changes before they shipped. A walkthrough of provider verification, the pact broker, and the CI gate that enforces it.</p>
-        <div class="foot"><div class="tags"><span class="tag">pact</span><span class="tag">rest</span><span class="tag">contracts</span></div><a class="read" href="posts/contract-testing-pact.html">read →</a></div>
+      <article class="post reveal" data-cat="scale" data-tags="scale aws performance">
+        <div class="meta"><span class="cat">Scale</span><span>2026-06-30</span><span class="dim">·</span><span>13 min</span></div>
+        <h3><a href="posts/scale-testing-7000-vms.html">Scale Testing Across 7,000 VMs and Six OS Families</a></h3>
+        <p>Provisioning, agent install, connectivity validation and behaviour verification — the full lifecycle of a scale test large enough that the harness becomes the hard part.</p>
+        <div class="foot"><div class="tags"><span class="tag">scale</span><span class="tag">aws</span><span class="tag">performance</span></div><a class="read" href="posts/scale-testing-7000-vms.html">read →</a></div>
       </article>
-      <article class="post reveal" data-cat="selenium" data-tags="selenium docker grid">
-        <div class="meta"><span class="cat">Selenium</span><span>2026-06-28</span><span class="dim">·</span><span>12 min</span></div>
-        <h3><a href="posts/selenium-grid-docker-actions.html">A Parallel Selenium Grid with Docker + GitHub Actions</a></h3>
-        <p>Standing up an ephemeral Selenium Grid per pipeline run — hub, nodes, and a health-check gate — so cross-browser tests run clean and tear down when the job ends.</p>
-        <div class="foot"><div class="tags"><span class="tag">selenium</span><span class="tag">docker</span><span class="tag">grid</span></div><a class="read" href="posts/selenium-grid-docker-actions.html">read →</a></div>
+      <article class="post reveal" data-cat="scale" data-tags="stress capacity datadog">
+        <div class="meta"><span class="cat">Scale</span><span>2026-06-21</span><span class="dim">·</span><span>10 min</span></div>
+        <h3><a href="posts/stress-testing-10m-incidents.html">Stress Testing to 10 Million Incidents: Finding the Breaking Point</a></h3>
+        <p>Load tests prove the system holds. Stress tests find where it stops — and that number is what production sizing should be built on.</p>
+        <div class="foot"><div class="tags"><span class="tag">stress</span><span class="tag">capacity</span><span class="tag">datadog</span></div><a class="read" href="posts/stress-testing-10m-incidents.html">read →</a></div>
       </article>
-      <article class="post reveal" data-cat="performance" data-tags="k6 load thresholds">
-        <div class="meta"><span class="cat">Performance</span><span>2026-06-20</span><span class="dim">·</span><span>10 min</span></div>
-        <h3><a href="posts/load-testing-k6-thresholds.html">Load Testing with k6 — Thresholds That Actually Gate a Release</a></h3>
-        <p>p95 latency and error-rate thresholds wired into CI so a regression fails the build, not the on-call engineer. Includes the scenario model and a Grafana breakdown.</p>
-        <div class="foot"><div class="tags"><span class="tag">k6</span><span class="tag">load</span><span class="tag">thresholds</span></div><a class="read" href="posts/load-testing-k6-thresholds.html">read →</a></div>
+      <article class="post reveal" data-cat="tooling" data-tags="chatops python slack">
+        <div class="meta"><span class="cat">Tooling</span><span>2026-06-08</span><span class="dim">·</span><span>8 min</span></div>
+        <h3><a href="posts/slack-chatops-for-qa.html">100+ Slack ChatOps Utilities, and Why Support Adopted Them</a></h3>
+        <p>Test execution, incident tracking and log collection driven from Slack — built for QA, adopted by support teams across every live deployment.</p>
+        <div class="foot"><div class="tags"><span class="tag">chatops</span><span class="tag">python</span><span class="tag">slack</span></div><a class="read" href="posts/slack-chatops-for-qa.html">read →</a></div>
       </article>
-      <article class="post reveal" data-cat="mobile" data-tags="appium android mobile">
-        <div class="meta"><span class="cat">Mobile</span><span>2026-06-12</span><span class="dim">·</span><span>7 min</span></div>
-        <h3><a href="posts/appium-mobile-automation.html">Stable Appium Automation on Real Android Devices</a></h3>
-        <p>Element locators that survive OS updates, explicit waits over sleeps, and a device-farm strategy that keeps mobile regression under ten minutes.</p>
-        <div class="foot"><div class="tags"><span class="tag">appium</span><span class="tag">android</span><span class="tag">mobile</span></div><a class="read" href="posts/appium-mobile-automation.html">read →</a></div>
+      <article class="post reveal" data-cat="automation" data-tags="robot-framework python ci">
+        <div class="meta"><span class="cat">Automation</span><span>2026-05-27</span><span class="dim">·</span><span>9 min</span></div>
+        <h3><a href="posts/unified-robot-framework-suite.html">One Suite for API, Web and Mobile with Robot Framework</a></h3>
+        <p>Three per-surface frameworks collapsed into a single Python and Robot Framework suite running in one CI pipeline with real-device testing.</p>
+        <div class="foot"><div class="tags"><span class="tag">robot-framework</span><span class="tag">python</span><span class="tag">ci</span></div><a class="read" href="posts/unified-robot-framework-suite.html">read →</a></div>
       </article>
     </div>
     <aside>
       <div class="card reveal">
         <div class="avatar"><img src="assets/img/byresh-200.jpg" width="200" height="200"
-             alt="Byresh" loading="lazy" decoding="async" /></div>
+             alt="Byresh Thimmeshappa" loading="lazy" decoding="async" /></div>
         <div class="who">Byresh</div>
-        <div class="role">Software Development Engineer in Test</div>
-        <div class="bio">8+ years building test frameworks, CI pipelines, and quality gates for web, API, and mobile. Focused on fast, deterministic suites that engineers actually trust.</div>
+        <div class="role">Senior SDET / QA Strategist</div>
+        <div class="bio">11+ years owning end-to-end quality for enterprise software and security
+          platforms — test strategy, large-scale performance validation, and agentic AI workflows
+          that generate and maintain test automation.</div>
       </div>
       <div class="card reveal">
         <h4>daily stack</h4>
         <div class="stack-list">
-          <div><span>Playwright / Selenium</span><span class="ok">✓</span></div>
-          <div><span>pytest / TestNG</span><span class="ok">✓</span></div>
-          <div><span>Python / TypeScript / Java</span><span class="ok">✓</span></div>
-          <div><span>GitHub Actions / Jenkins</span><span class="ok">✓</span></div>
-          <div><span>k6 / JMeter</span><span class="ok">✓</span></div>
-          <div><span>Docker / Allure</span><span class="ok">✓</span></div>
+          <div><span>Python / Bash</span><span class="ok">✓</span></div>
+          <div><span>pytest / Robot Framework</span><span class="ok">✓</span></div>
+          <div><span>Playwright (Python) / Selenium</span><span class="ok">✓</span></div>
+          <div><span>JMeter / Locust</span><span class="ok">✓</span></div>
+          <div><span>AWS / Docker / Kubernetes</span><span class="ok">✓</span></div>
+          <div><span>Datadog / Grafana</span><span class="ok">✓</span></div>
         </div>
       </div>
       <div class="card reveal">
         <h4>topics</h4>
         <div class="topics">
-          <span>playwright</span><span>selenium</span><span>pytest</span><span>api</span><span>ci-cd</span><span>flaky-tests</span><span>k6</span><span>appium</span><span>pact</span><span>docker</span><span>allure</span>
+          <span>agentic-ai</span><span>mcp</span><span>local-llm</span><span>pytest</span><span>scale-testing</span><span>performance</span><span>jmeter</span><span>datadog</span><span>chatops</span><span>robot-framework</span><span>release-quality</span>
         </div>
       </div>
     </aside>
@@ -144,13 +144,13 @@
 <footer>
   <div class="wrap fl">
     <span>© <span data-year></span> Byresh · SDET</span>
-    <span>built with plain HTML — green means ship it · <a href="mailto:byresh.sdet@example.com">byresh.sdet@example.com</a></span>
+    <span>built with plain HTML — green means ship it · <a href="mailto:byresh.151993@gmail.com">byresh.151993@gmail.com</a></span>
   </div>
 </footer>
 
 <button class="to-top" id="to-top" type="button" aria-label="Back to top">↑</button>
 
-<script src="assets/js/main.js"></script>
+<script src="assets/js/main.js?v=adcb442e"></script>
 <script>
 (function () {
   var chips = document.getElementById('chips');

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Load tests prove the system holds. Stress tests find where it stops — and that number is what production sizing should be built on." />
+<title>Stress Testing to 10 Million Incidents: Finding the Breaking Point — Byresh Thimmeshappa</title>
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="apple-touch-icon" href="../assets/img/favicon.png" />
+<meta property="og:title" content="Stress Testing to 10 Million Incidents: Finding the Breaking Point — Byresh Thimmeshappa" />
+<meta property="og:description" content="Load tests prove the system holds. Stress tests find where it stops — and that number is what production sizing should be built on." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://byresh-sdet.github.io/assets/img/byresh-400.jpg" />
+<meta name="twitter:card" content="summary" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/style.css?v=aebde1f2" />
+<script>
+  // set theme before first paint so there is no light/dark flash
+  try {
+    document.documentElement.setAttribute(
+      'data-theme', localStorage.getItem('gs-theme') || 'dark');
+  } catch (e) { }
+</script>
+</head>
+<body data-page="blog">
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html"><span class="p">~$</span> green-suite</a>
+    <div class="nav-right">
+      <nav class="nav-links" id="nav-links">
+      <a href="../index.html">home</a>
+      <a href="../about.html">about</a>
+      <a href="../skills.html">skills</a>
+      <a href="../projects.html">projects</a>
+      <a href="../blog.html">blog</a>
+      <a href="../contact.html">contact</a>
+      </nav>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to light mode">☀</button>
+      <button class="icon-btn nav-toggle" id="nav-toggle" type="button"
+              aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">≡</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <article class="article">
+    <header class="article-head reveal in">
+      <div class="meta" style="display:flex;gap:10px;align-items:center;font-size:11.5px;color:var(--muted);flex-wrap:wrap">
+        <span class="cat">Scale</span><span>2026-06-21</span>
+        <span class="dim">·</span><span>10 min read</span>
+      </div>
+      <h1>Stress Testing to 10 Million Incidents: Finding the Breaking Point</h1>
+      <p style="color:var(--muted);font-size:14px;margin:0">Load tests prove the system holds. Stress tests find where it stops — and that number is what production sizing should be built on.</p>
+      <div class="tags" style="margin-top:12px"><span class="tag">stress</span><span class="tag">capacity</span><span class="tag">datadog</span></div>
+    </header>
+
+    <div class="article-body reveal in">
+<h2>Load testing and stress testing answer different questions</h2>
+<p>A load test asks: does the system meet its targets at expected volume? A stress test asks:
+where does it stop, and how? Both matter, but only the second one gives you a sizing model,
+because sizing is a question about headroom and headroom is measured from the ceiling down.</p>
+<p>So the goal of these runs was explicitly to break things — pushing to 5–10 million security
+incidents to find the point where behaviour changed.</p>
+
+<h2>Ramp, don't leap</h2>
+<p>Jumping straight to peak tells you only pass or fail. Ramping tells you the <em>shape</em> of
+the degradation, which is the part with diagnostic value:</p>
+<ul>
+  <li><strong>Graceful degradation</strong> — latency climbs smoothly, nothing drops. Usually a
+      queue absorbing pressure. Often acceptable.</li>
+  <li><strong>Cliff</strong> — fine, fine, fine, then collapse. Almost always a hard resource
+      limit: a connection pool, a thread pool, a disk.</li>
+  <li><strong>Sawtooth</strong> — recovers and fails repeatedly. Something is retrying and
+      amplifying its own load.</li>
+</ul>
+<p>The cliff is the interesting one, because the cliff edge <em>is</em> your sizing number.</p>
+
+<h2>Watch four signals together</h2>
+<p>Throughput, latency, error rate, resource saturation. Any one alone misleads:</p>
+<ul>
+  <li>Latency up, throughput flat → queueing or a lock.</li>
+  <li>Latency up, throughput <em>down</em> → past the knee, the system is losing ground.</li>
+  <li>Errors up, latency flat → something shedding load deliberately, like a limiter.</li>
+  <li>Everything fine, one resource pinned → the next bottleneck, waiting.</li>
+</ul>
+<p>Correlating these across the run in Datadog is what turns "it fell over" into "it fell over
+because of this."</p>
+
+<h2>The data layer is usually the answer</h2>
+<p>Across these runs the recurring constraint was the database, not the application tier —
+specifically queries that were unremarkable at normal volume and pathological under sustained
+incident load. Finding them meant watching query-level latency during the ramp rather than
+looking at aggregate service health, which stayed green well past the point where individual
+queries had gone bad.</p>
+
+<blockquote>Aggregate health metrics are designed to stay calm. That's useful in production and
+actively unhelpful in a stress test.</blockquote>
+
+<h2>Rate limits and concurrency</h2>
+<p>A related but separate question: does the API behave correctly when many callers hit it at
+once? Rate limiting is meant to shed load — the test is whether it sheds the <em>right</em>
+load and whether the service stays stable while doing it. Driving concurrent access with JMeter
+against the microservices confirmed both the limiter's behaviour and that nothing downstream
+destabilised when it engaged.</p>
+
+<h2>What the number is for</h2>
+<p>The deliverable was never "we tested to 10M." It was: at this incident volume you need this
+infrastructure, and here is the evidence. That output shapes production sizing and customer
+deployment guidelines — which is why the breaking point, not the passing point, is the number
+worth finding.</p>
+    </div>
+
+    <nav class="article-nav">
+      <span><a href="scale-testing-7000-vms.html">← Scale Testing Across 7,000 VMs and Six OS Families</a></span>
+      <span><a href="slack-chatops-for-qa.html">100+ Slack ChatOps Utilities, and Why Support Adopted Them →</a></span>
+    </nav>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap fl">
+    <span>© <span data-year></span> Byresh · SDET</span>
+    <span>built with plain HTML — green means ship it · <a href="mailto:byresh.151993@gmail.com">byresh.151993@gmail.com</a></span>
+  </div>
+</footer>
+
+<button class="to-top" id="to-top" type="button" aria-label="Back to top">↑</button>
+
+<script src="../assets/js/main.js?v=adcb442e"></script>
+
+</body>
+</html>

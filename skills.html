@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="Automation, languages, CI/CD, API and performance tooling used daily by an SDET." />
-<title>skills — Byresh · SDET</title>
+<meta name="description" content="Agentic AI and MCP orchestration, Python automation, scale and performance testing, AWS and CI/CD, quality practice." />
+<title>skills — Byresh Thimmeshappa · Senior SDET</title>
 <link rel="icon" type="image/png" href="assets/img/favicon.png" />
 <link rel="apple-touch-icon" href="assets/img/favicon.png" />
-<meta property="og:title" content="skills — Byresh · SDET" />
-<meta property="og:description" content="Automation, languages, CI/CD, API and performance tooling used daily by an SDET." />
+<meta property="og:title" content="skills — Byresh Thimmeshappa · Senior SDET" />
+<meta property="og:description" content="Agentic AI and MCP orchestration, Python automation, scale and performance testing, AWS and CI/CD, quality practice." />
 <meta property="og:type" content="website" />
 <meta property="og:image" content="https://byresh-sdet.github.io/assets/img/byresh-400.jpg" />
 <meta name="twitter:card" content="summary" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/style.css" />
+<link rel="stylesheet" href="assets/css/style.css?v=aebde1f2" />
 <script>
   // set theme before first paint so there is no light/dark flash
   try {
@@ -49,175 +49,340 @@
 
   <section class="page-head reveal in">
     <div class="eyebrow">$ pip list --local</div>
-    <h1>Technical <span class="gradient">stack</span></h1>
-    <p>Tools and practices I use daily, grouped by what they're for. Percentages are
-       self-assessed depth, not certification scores.</p>
+    <h1>Technical <span class="gradient">arsenal</span></h1>
+    <p>Tools and practices I work with, grouped by what they're for.</p>
   </section>
 
   <div class="sec-head reveal"><span class="pr">$</span><h2>ls ./skills</h2>
-    <span class="note">46 entries</span></div>
+    <span class="note">51 entries</span></div>
+
+  <div class="skills-tabs-mobile" id="skills-tabs-mobile" role="tablist">
+        <button class="skills-tab-mobile cat-ai active" type="button" aria-label="AI & Agentic QA" data-panel="ai">🤖</button>
+        <button class="skills-tab-mobile cat-automation" type="button" aria-label="Languages & Automation" data-panel="automation">⌨</button>
+        <button class="skills-tab-mobile cat-scale" type="button" aria-label="Performance & Scale" data-panel="scale">📈</button>
+        <button class="skills-tab-mobile cat-infra" type="button" aria-label="Cloud & CI/CD" data-panel="infra">☁</button>
+        <button class="skills-tab-mobile cat-practice" type="button" aria-label="Quality Practice" data-panel="practice">🧭</button>
+  </div>
 
   <div class="skills-layout">
-    <div class="skills-tabs reveal" id="skills-tabs" role="tablist">
-      <button class="skills-tab active" type="button" role="tab" aria-selected="true" data-panel="automation"><span>🎭</span><span>UI Automation</span><span class="count">4</span></button>
-      <button class="skills-tab" type="button" role="tab" aria-selected="false" data-panel="languages"><span>⌨</span><span>Languages</span><span class="count">5</span></button>
-      <button class="skills-tab" type="button" role="tab" aria-selected="false" data-panel="cicd"><span>⚙</span><span>CI/CD & Infra</span><span class="count">4</span></button>
-      <button class="skills-tab" type="button" role="tab" aria-selected="false" data-panel="api"><span>🔌</span><span>API & Performance</span><span class="count">4</span></button>
-      <button class="skills-tab" type="button" role="tab" aria-selected="false" data-panel="practice"><span>🧭</span><span>Quality Practice</span><span class="count">4</span></button>
+    <div class="skills-sidebar reveal" id="skills-tabs" role="tablist">
+        <button class="skills-sidebar-tab cat-ai active" type="button"
+                role="tab" aria-selected="true" data-panel="ai">
+          <span class="skills-sidebar-icon">🤖</span>
+          <span class="skills-sidebar-info">
+            <span class="skills-sidebar-title">AI & Agentic QA</span>
+            <span class="skills-sidebar-bar-track">
+              <span class="skills-sidebar-bar-fill" data-pct="92"></span>
+            </span>
+          </span>
+          <span class="skills-sidebar-badge">10</span>
+        </button>
+        <button class="skills-sidebar-tab cat-automation" type="button"
+                role="tab" aria-selected="false" data-panel="automation">
+          <span class="skills-sidebar-icon">⌨</span>
+          <span class="skills-sidebar-info">
+            <span class="skills-sidebar-title">Languages & Automation</span>
+            <span class="skills-sidebar-bar-track">
+              <span class="skills-sidebar-bar-fill" data-pct="90"></span>
+            </span>
+          </span>
+          <span class="skills-sidebar-badge">10</span>
+        </button>
+        <button class="skills-sidebar-tab cat-scale" type="button"
+                role="tab" aria-selected="false" data-panel="scale">
+          <span class="skills-sidebar-icon">📈</span>
+          <span class="skills-sidebar-info">
+            <span class="skills-sidebar-title">Performance & Scale</span>
+            <span class="skills-sidebar-bar-track">
+              <span class="skills-sidebar-bar-fill" data-pct="88"></span>
+            </span>
+          </span>
+          <span class="skills-sidebar-badge">9</span>
+        </button>
+        <button class="skills-sidebar-tab cat-infra" type="button"
+                role="tab" aria-selected="false" data-panel="infra">
+          <span class="skills-sidebar-icon">☁</span>
+          <span class="skills-sidebar-info">
+            <span class="skills-sidebar-title">Cloud & CI/CD</span>
+            <span class="skills-sidebar-bar-track">
+              <span class="skills-sidebar-bar-fill" data-pct="84"></span>
+            </span>
+          </span>
+          <span class="skills-sidebar-badge">11</span>
+        </button>
+        <button class="skills-sidebar-tab cat-practice" type="button"
+                role="tab" aria-selected="false" data-panel="practice">
+          <span class="skills-sidebar-icon">🧭</span>
+          <span class="skills-sidebar-info">
+            <span class="skills-sidebar-title">Quality Practice</span>
+            <span class="skills-sidebar-bar-track">
+              <span class="skills-sidebar-bar-fill" data-pct="94"></span>
+            </span>
+          </span>
+          <span class="skills-sidebar-badge">11</span>
+        </button>
+      <div class="skills-sidebar-total">
+        <span class="skills-sidebar-total-num">51</span> total skills
+      </div>
     </div>
-    <div class="reveal">
-      <section class="skills-panel active" id="panel-automation" role="tabpanel">
-        <div class="card">
-          <h4>UI Automation — proficiency</h4>
-          <div class="skill-rows">
-          <div class="skill-row">
-            <div class="top"><span class="nm">Playwright</span><span class="pc">95%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="95"></div></div>
-          </div>
-          <div class="skill-row">
-            <div class="top"><span class="nm">Selenium WebDriver</span><span class="pc">90%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="90"></div></div>
-          </div>
-          <div class="skill-row">
-            <div class="top"><span class="nm">Appium</span><span class="pc">80%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="80"></div></div>
-          </div>
-          <div class="skill-row">
-            <div class="top"><span class="nm">Cypress</span><span class="pc">70%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="70"></div></div>
-          </div>
-          </div>
-          <div class="tile-grid">
-          <div class="tile"><span>▹</span><span>Page objects</span></div>
-          <div class="tile"><span>▹</span><span>Visual diffing</span></div>
-          <div class="tile"><span>▹</span><span>Trace analysis</span></div>
-          <div class="tile"><span>▹</span><span>Cross-browser</span></div>
-          <div class="tile"><span>▹</span><span>Component testing</span></div>
+    <div class="skills-content reveal">
+      <section class="skills-panel cat-ai active" id="panel-ai" role="tabpanel">
+        <div class="skills-panel-header">
+          <div class="skills-panel-icon">🤖</div>
+          <div>
+            <h3 class="skills-panel-title">AI & Agentic QA</h3>
+            <p class="skills-panel-count">10 skills</p>
           </div>
         </div>
-      </section>
-      <section class="skills-panel" id="panel-languages" role="tabpanel">
-        <div class="card">
-          <h4>Languages — proficiency</h4>
-          <div class="skill-rows">
-          <div class="skill-row">
-            <div class="top"><span class="nm">Python</span><span class="pc">95%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="95"></div></div>
-          </div>
-          <div class="skill-row">
-            <div class="top"><span class="nm">TypeScript / JavaScript</span><span class="pc">88%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="88"></div></div>
-          </div>
-          <div class="skill-row">
-            <div class="top"><span class="nm">Java</span><span class="pc">80%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="80"></div></div>
-          </div>
-          <div class="skill-row">
-            <div class="top"><span class="nm">Bash</span><span class="pc">78%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="78"></div></div>
-          </div>
-          <div class="skill-row">
-            <div class="top"><span class="nm">SQL</span><span class="pc">75%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="75"></div></div>
-          </div>
-          </div>
-          <div class="tile-grid">
-          <div class="tile"><span>▹</span><span>pytest</span></div>
-          <div class="tile"><span>▹</span><span>TestNG</span></div>
-          <div class="tile"><span>▹</span><span>Jest</span></div>
-          <div class="tile"><span>▹</span><span>asyncio</span></div>
-          <div class="tile"><span>▹</span><span>Type hints</span></div>
-          </div>
+        <div class="skills-panel-items">
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Multi-agent design</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">MCP orchestration</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Claude API</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Prompt design</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Local-LLM analysis</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Human-in-the-loop gates</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Self-healing policy</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">OpenAPI-driven generation</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">n8n</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">ChatOps</span>
+            </div>
         </div>
       </section>
-      <section class="skills-panel" id="panel-cicd" role="tabpanel">
-        <div class="card">
-          <h4>CI/CD & Infra — proficiency</h4>
-          <div class="skill-rows">
-          <div class="skill-row">
-            <div class="top"><span class="nm">GitHub Actions</span><span class="pc">92%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="92"></div></div>
-          </div>
-          <div class="skill-row">
-            <div class="top"><span class="nm">Docker</span><span class="pc">88%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="88"></div></div>
-          </div>
-          <div class="skill-row">
-            <div class="top"><span class="nm">Jenkins</span><span class="pc">82%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="82"></div></div>
-          </div>
-          <div class="skill-row">
-            <div class="top"><span class="nm">Kubernetes</span><span class="pc">70%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="70"></div></div>
-          </div>
-          </div>
-          <div class="tile-grid">
-          <div class="tile"><span>▹</span><span>Matrix builds</span></div>
-          <div class="tile"><span>▹</span><span>Test sharding</span></div>
-          <div class="tile"><span>▹</span><span>Quality gates</span></div>
-          <div class="tile"><span>▹</span><span>Artifact reporting</span></div>
-          <div class="tile"><span>▹</span><span>Caching</span></div>
+      <section class="skills-panel cat-automation" id="panel-automation" role="tabpanel">
+        <div class="skills-panel-header">
+          <div class="skills-panel-icon">⌨</div>
+          <div>
+            <h3 class="skills-panel-title">Languages & Automation</h3>
+            <p class="skills-panel-count">10 skills</p>
           </div>
         </div>
-      </section>
-      <section class="skills-panel" id="panel-api" role="tabpanel">
-        <div class="card">
-          <h4>API & Performance — proficiency</h4>
-          <div class="skill-rows">
-          <div class="skill-row">
-            <div class="top"><span class="nm">REST / HTTP testing</span><span class="pc">92%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="92"></div></div>
-          </div>
-          <div class="skill-row">
-            <div class="top"><span class="nm">k6</span><span class="pc">85%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="85"></div></div>
-          </div>
-          <div class="skill-row">
-            <div class="top"><span class="nm">Pact (contract testing)</span><span class="pc">82%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="82"></div></div>
-          </div>
-          <div class="skill-row">
-            <div class="top"><span class="nm">JMeter</span><span class="pc">75%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="75"></div></div>
-          </div>
-          </div>
-          <div class="tile-grid">
-          <div class="tile"><span>▹</span><span>Schema validation</span></div>
-          <div class="tile"><span>▹</span><span>Threshold gating</span></div>
-          <div class="tile"><span>▹</span><span>Mock servers</span></div>
-          <div class="tile"><span>▹</span><span>gRPC</span></div>
-          <div class="tile"><span>▹</span><span>Postman/Newman</span></div>
-          </div>
+        <div class="skills-panel-items">
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Python</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">pytest</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Robot Framework</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Bash</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Playwright (Python)</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Selenium</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Appium</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Postman</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">JSON schema validation</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">YAML</span>
+            </div>
         </div>
       </section>
-      <section class="skills-panel" id="panel-practice" role="tabpanel">
-        <div class="card">
-          <h4>Quality Practice — proficiency</h4>
-          <div class="skill-rows">
-          <div class="skill-row">
-            <div class="top"><span class="nm">Test strategy & design</span><span class="pc">92%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="92"></div></div>
+      <section class="skills-panel cat-scale" id="panel-scale" role="tabpanel">
+        <div class="skills-panel-header">
+          <div class="skills-panel-icon">📈</div>
+          <div>
+            <h3 class="skills-panel-title">Performance & Scale</h3>
+            <p class="skills-panel-count">9 skills</p>
           </div>
-          <div class="skill-row">
-            <div class="top"><span class="nm">Flake forensics</span><span class="pc">90%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="90"></div></div>
+        </div>
+        <div class="skills-panel-items">
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Scale test design</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">JMeter</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Locust</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Capacity analysis</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Bottleneck analysis</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Rate-limit validation</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Concurrency testing</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">3K–7K VM fleets</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">5–10M incident stress</span>
+            </div>
+        </div>
+      </section>
+      <section class="skills-panel cat-infra" id="panel-infra" role="tabpanel">
+        <div class="skills-panel-header">
+          <div class="skills-panel-icon">☁</div>
+          <div>
+            <h3 class="skills-panel-title">Cloud & CI/CD</h3>
+            <p class="skills-panel-count">11 skills</p>
           </div>
-          <div class="skill-row">
-            <div class="top"><span class="nm">Shift-left reviews</span><span class="pc">85%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="85"></div></div>
+        </div>
+        <div class="skills-panel-items">
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">AWS EC2</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">AWS EKS</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">S3</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">MSK</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">DocumentDB</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Redis</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Docker</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Kubernetes</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Helm</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Jenkins</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">GitHub Actions</span>
+            </div>
+        </div>
+      </section>
+      <section class="skills-panel cat-practice" id="panel-practice" role="tabpanel">
+        <div class="skills-panel-header">
+          <div class="skills-panel-icon">🧭</div>
+          <div>
+            <h3 class="skills-panel-title">Quality Practice</h3>
+            <p class="skills-panel-count">11 skills</p>
           </div>
-          <div class="skill-row">
-            <div class="top"><span class="nm">Release readiness</span><span class="pc">85%</span></div>
-            <div class="bar-track"><div class="bar-fill" data-pct="85"></div></div>
-          </div>
-          </div>
-          <div class="tile-grid">
-          <div class="tile"><span>▹</span><span>Risk-based testing</span></div>
-          <div class="tile"><span>▹</span><span>Exploratory</span></div>
-          <div class="tile"><span>▹</span><span>Metrics & reporting</span></div>
-          <div class="tile"><span>▹</span><span>Mentoring</span></div>
-          <div class="tile"><span>▹</span><span>Agile QA</span></div>
-          </div>
+        </div>
+        <div class="skills-panel-items">
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Test strategy</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Risk-based planning</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Quality gates</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Release readiness</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Defect lifecycle & RCA</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Quality metrics</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">TestRail</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">JIRA</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Datadog</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Grafana</span>
+            </div>
+            <div class="skill-tile">
+              <span class="skill-tile-icon"><span class="skill-tile-dot"></span></span>
+              <span class="skill-tile-name">Shift-left reviews</span>
+            </div>
         </div>
       </section>
     </div>
@@ -226,16 +391,17 @@
   <div class="sec-head reveal"><span class="pr">$</span><h2>cat ./working-agreements</h2></div>
   <div class="card-grid">
     <div class="card hl-card reveal">
-      <span class="hl-icon">🧪</span><h3>Test pyramid, honestly</h3>
-      <p>Most assertions below the UI. E2E reserved for journeys that genuinely need a browser.</p>
+      <span class="hl-icon">🚦</span><h3>Gates, not dashboards</h3>
+      <p>If a check can't block a release, it isn't a gate — and it will be ignored within a month.</p>
     </div>
     <div class="card hl-card warm reveal">
-      <span class="hl-icon">🚦</span><h3>Gates, not dashboards</h3>
-      <p>If a check can't fail the build, it isn't a gate — and it will be ignored within a month.</p>
+      <span class="hl-icon">🔍</span><h3>Evidence with every claim</h3>
+      <p>A tool that reports a conclusion without the lines it came from just adds a step.</p>
     </div>
     <div class="card hl-card pink reveal">
-      <span class="hl-icon">🧹</span><h3>Delete dead tests</h3>
-      <p>A quarantined test that nobody fixes in two weeks gets removed. Ignored tests cost trust.</p>
+      <span class="hl-icon">🤝</span><h3>Humans on the boundaries</h3>
+      <p>Agents can draft, repair and report. Merging is a person's call, and every auto-fix is
+         logged for audit.</p>
     </div>
   </div>
 
@@ -244,13 +410,13 @@
 <footer>
   <div class="wrap fl">
     <span>© <span data-year></span> Byresh · SDET</span>
-    <span>built with plain HTML — green means ship it · <a href="mailto:byresh.sdet@example.com">byresh.sdet@example.com</a></span>
+    <span>built with plain HTML — green means ship it · <a href="mailto:byresh.151993@gmail.com">byresh.151993@gmail.com</a></span>
   </div>
 </footer>
 
 <button class="to-top" id="to-top" type="button" aria-label="Back to top">↑</button>
 
-<script src="assets/js/main.js"></script>
+<script src="assets/js/main.js?v=adcb442e"></script>
 
 </body>
 </html>
